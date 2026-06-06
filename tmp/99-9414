@@ -1,3 +1,0 @@
-// #define is a preprocessor directive that creates a macro (text substitution)
-// Before compilation, every occurrence of SDL_FLAGS is replaced with SDL_INIT_VIDEO
-#define SDL_FLAGS SDL_INIT_VIDEO

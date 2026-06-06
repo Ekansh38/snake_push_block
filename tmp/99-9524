@@ -1,2 +1,0 @@
-// ** means pointer to pointer - allows function to modify caller's pointer to allocate memory
-bool game_new(struct Game **game) {

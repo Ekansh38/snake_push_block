@@ -1,2 +1,0 @@
-// Initialize SDL with video subsystem support
-#define SDL_FLAGS SDL_INIT_VIDEO
