@@ -1,3 +1,14 @@
+<Context>
+You receive a selection in neovim that you need to replace with new code.
+The selection's contents may contain notes, incorporate the notes every time if there are some.
+consider the context of the selection and what you are suppose to be implementing
+<SELECTION_LOCATION>
+range(point(51,1),point(51,42))
+</SELECTION_LOCATION>
+<SELECTION_CONTENT>
+  *game = calloc(1, sizeof(struct Game));
+</SELECTION_CONTENT>
+<SURROUNDING_CONTEXT>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <stdbool.h>
@@ -16,6 +27,7 @@ struct Game {
   SDL_Event event;
   bool running;
   double delta_time;
+  int scene; // 0 = start screen, 1 = level one, etc.
 };
 
 bool game_init_sdl(struct Game *g);
@@ -105,7 +117,12 @@ void game_events(struct Game *g) {
 }
 
 void game_draw(struct Game *g) {
+  SDL_SetRenderDrawColor(g->renderer, 255, 0, 0, 255);
+
   SDL_RenderClear(g->renderer);
+
+  SDL_SetRenderDrawColor(g->renderer, 0, 0, 0, 255);
+
 
   SDL_RenderPresent(g->renderer);
 }
@@ -119,12 +136,9 @@ void game_run(struct Game *g) {
     g->delta_time = (double)delta_time / SDL_NS_PER_SECOND;
     last_time = current_time;
 
-
-
     game_events(g);
 
     game_draw(g);
-
   }
 }
 
@@ -143,3 +157,24 @@ int main(void) {
 
   return exit_status;
 }
+</SURROUNDING_CONTEXT>
+
+</Context>
+<Prompt>
+explain wtf is happening with the *** and the calloc in a comment
+</Prompt>
+
+<Location><File>/Users/ekanshgoenka/Desktop/Projects/snake_push_block/main.c</File><Function>range(point(51,1),point(51,42))</Function></Location>
+<FunctionText>  *game = calloc(1, sizeof(struct Game));</FunctionText>
+<TEMP_FILE>./tmp/99-7224</TEMP_FILE>
+<MustObey>
+NEVER alter any file other than TEMP_FILE.
+never provide the requested changes as conversational output. Return only the code.
+ONLY provide requested changes by writing the change to TEMP_FILE
+
+never attempt to read TEMP_FILE.
+It is purely for output.
+Previous contents, which may not exist, can be written over without worry
+After writing TEMP_FILE once you should be done.  Be done and end the session.
+
+</MustObey>

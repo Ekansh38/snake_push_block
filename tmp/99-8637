@@ -1,0 +1,3 @@
+  // calloc(count, size) - allocates 'count' elements of 'size' bytes each, zeroed
+  // Here: 1 element of sizeof(struct Game) bytes
+  *game = calloc(1, sizeof(struct Game));

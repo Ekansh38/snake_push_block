@@ -1,0 +1,4 @@
+  // Allocate memory for Game struct. game is a double pointer (**), so we
+  // dereference once (*game) to assign the newly allocated memory address.
+  // calloc zeros the memory and returns NULL on failure.
+  *game = calloc(1, sizeof(struct Game));

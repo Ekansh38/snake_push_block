@@ -1,0 +1,5 @@
+  // 'game' is a pointer-to-pointer (struct Game **)
+  // '*game' dereferences once to get the pointer itself (struct Game *)
+  // We're assigning calloc's result to that pointer
+  // '**game' would dereference twice to get the actual struct
+  *game = calloc(1, sizeof(struct Game));

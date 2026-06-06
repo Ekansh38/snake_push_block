@@ -1,0 +1,13 @@
+  *game = malloc(sizeof(struct Game));
+  if (*game == NULL) {
+    fprintf(stderr, "Error allocating memory for Game.\n");
+    return false;
+  }
+  // With malloc, memory is uninitialized - must zero it or set fields explicitly
+  memset(*game, 0, sizeof(struct Game));
+  // Alternatively: manually initialize each field
+  // (*game)->window = NULL;
+  // (*game)->renderer = NULL;
+  // (*game)->running = false;
+  // (*game)->delta_time = 0.0;
+  // (*game)->scene = 0;
