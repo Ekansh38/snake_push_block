@@ -9,11 +9,12 @@ A snake game with block-pushing mechanics, built with C and SDL3.
 
 - GCC
 - [SDL3](https://github.com/libsdl-org/SDL)
+- [SDL3_image](https://github.com/libsdl-org/SDL_image)
 
 #### macOS
 
 ```sh
-brew install sdl3
+brew install sdl3 sdl3_image
 ```
 
 On Apple Silicon Macs, you may need to add these to your `~/.zshrc` so the compiler can find Homebrew libraries:
@@ -26,7 +27,7 @@ export LIBRARY_PATH=/opt/homebrew/lib:$LIBRARY_PATH
 #### Linux (Debian/Ubuntu)
 
 ```sh
-sudo apt install libsdl3-dev
+sudo apt install libsdl3-dev libsdl3-image-dev
 ```
 
 #### Windows

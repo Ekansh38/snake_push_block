@@ -25,13 +25,15 @@ void game_events(struct Game *g) {
 }
 
 void game_draw(struct Game *g) {
-  SDL_SetRenderDrawColor(g->renderer, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(g->renderer, 0, 0, 0, 255); // black background
+    SDL_RenderClear(g->renderer);
 
-  SDL_RenderClear(g->renderer);
+    if (g->scene == 0) {
+        SDL_FRect dst_rect = {.x = 0, .y = 0, .w = WINDOW_WIDTH, .h = WINDOW_HEIGHT};
+        SDL_RenderTexture(g->renderer, g->title_screen, NULL, &dst_rect);
+    }
 
-  SDL_SetRenderDrawColor(g->renderer, 0, 0, 0, 255);
-
-  SDL_RenderPresent(g->renderer);
+    SDL_RenderPresent(g->renderer);
 }
 
 void game_run(struct Game *g) {

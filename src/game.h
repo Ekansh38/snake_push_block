@@ -20,6 +20,7 @@ struct Game {
   bool running;
   double delta_time;
   int scene; // 0 = start screen, 1 = level one, etc.
+  SDL_Texture *title_screen;
 };
 
 bool game_init_sdl(struct Game *g);
@@ -28,6 +29,5 @@ void game_free(struct Game **game);
 void game_events(struct Game *g);
 void game_draw(struct Game *g);
 void game_run(struct Game *g);
-
 
 #endif

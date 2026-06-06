@@ -1,9 +1,10 @@
+#include "game.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <SDL3_image/SDL_image.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.h"
 
 bool game_init_sdl(struct Game *g) {
   if (!SDL_Init(SDL_FLAGS)) {
@@ -20,6 +21,12 @@ bool game_init_sdl(struct Game *g) {
   g->renderer = SDL_CreateRenderer(g->window, NULL);
   if (!g->renderer) {
     fprintf(stderr, "Error creating Renderer: %s\n", SDL_GetError());
+    return false;
+  }
+
+  g->title_screen = IMG_LoadTexture(g->renderer, "assets/title.png");
+  if (g->title_screen == NULL) {
+    SDL_Log("Failed to load texture: %s", SDL_GetError());
     return false;
   }
 
