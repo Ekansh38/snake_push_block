@@ -1,0 +1,16 @@
+        game_draw(g);
+
+        // Delta time calculation
+        static Uint64 last_time = 0;
+        Uint64 current_time = SDL_GetTicks();
+        if (last_time == 0) last_time = current_time;
+
+        float delta_time = (current_time - last_time) / 1000.0f; // in seconds
+        last_time = current_time;
+
+        // Cap to ~60 FPS
+        const float target_frame_time = 1.0f / 60.0f;
+        if (delta_time < target_frame_time) {
+            SDL_Delay((Uint32)((target_frame_time - delta_time) * 1000.0f));
+        }
+    }
