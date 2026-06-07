@@ -21,6 +21,10 @@ struct Game {
   double delta_time;
   int scene; // 0 = start screen, 1 = level one, etc.
   SDL_Texture *title_screen;
+
+  // play button
+  SDL_Texture *play_button_reg;
+  SDL_Texture *play_button_hover;
 };
 
 bool game_init_sdl(struct Game *g);
