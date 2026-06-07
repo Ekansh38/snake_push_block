@@ -35,6 +35,9 @@ struct Game {
   // last cached vars
 
   int last_cached_level_number;
+  SDL_Surface *level_number_surface;
+  SDL_Texture *level_number_texture;
+
 };
 
 bool game_init_sdl(struct Game *g);

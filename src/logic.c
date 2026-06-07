@@ -8,6 +8,24 @@
 
 void get_mouse_pos(struct Game *g, float *x, float *y);
 
+void update_level_text(struct Game *g, int number) {
+
+  char the_string[32];
+  sprintf(the_string, "Level: %d", number);
+
+  SDL_Color text_color = {.r = 255, .g = 255, .b = 255, .a = 255};
+  g->level_number_surface =
+      TTF_RenderText_Blended(g->font, the_string, 4, text_color);
+  g->last_cached_level_number = number;
+  if (g->goal_surface) {
+    g->level_number_texture =
+        SDL_CreateTextureFromSurface(g->renderer, g->level_number_surface);
+    if (g->level_number_texture) {
+      SDL_SetTextureScaleMode(g->level_number_texture, SDL_SCALEMODE_LINEAR);
+    }
+  }
+}
+
 void game_events(struct Game *g) {
 
   while (SDL_PollEvent(&g->event)) {
@@ -120,8 +138,12 @@ void game_draw(struct Game *g) {
     // draw right grid
 
     // columns
+    pad = 0;
     for (int i = 1; i <= number_of_columns; i++) {
-      SDL_FRect line = {.x = i * cell_size + grid_width,
+      if (i == number_of_columns) {
+        pad = -2;
+      }
+      SDL_FRect line = {.x = i * cell_size + grid_width + pad,
                         .y = grid_y_start,
                         .w = width_of_grid_line,
                         .h = grid_height};
@@ -148,16 +170,30 @@ void game_draw(struct Game *g) {
     float tw = g->goal_surface->w / 8.0f;
     float th = g->goal_surface->h / 8.0f;
     SDL_FRect text_rect = {
-        .x = WINDOW_WIDTH / 4 - tw, .y = 76 / 2 - (th / 2), .w = tw, .h = th};
+        .x = WINDOW_WIDTH / 4 - (tw/2), .y = 76 / 2 - (th / 2), .w = tw, .h = th};
     SDL_RenderTexture(g->renderer, g->goal_texture, NULL, &text_rect);
 
-
     // implement the level text correctly
+    if (g->scene == 1) {
+      if (g->last_cached_level_number != 1) {
+        update_level_text(g, 1);
+      }
+    } else if (g->scene == 2) {
+      if (g->last_cached_level_number != 2) {
+        update_level_text(g, 2);
+      }
+    }
+
+    tw = g->level_number_surface->w / 8.0f;
+    th = g->level_number_surface->h / 8.0f;
+    SDL_FRect level_rect = {.x = (WINDOW_WIDTH / 4) * 3 - (tw/2),
+                            .y = 76 / 2 - (th / 2),
+                            .w = tw,
+                            .h = th};
+    SDL_RenderTexture(g->renderer, g->level_number_texture, NULL, &level_rect);
+
     // implement the timer text correctly
-
   }
-
-
 
   SDL_RenderPresent(g->renderer);
 }

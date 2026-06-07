@@ -43,12 +43,19 @@ bool game_init_sdl(struct Game *g) {
   SDL_Color text_color = {.r = 255, .g = 255, .b = 255, .a = 255};
   g->goal_surface = TTF_RenderText_Blended(g->font, "Goal", 4, text_color);
   if (g->goal_surface) {
-
     g->goal_texture = SDL_CreateTextureFromSurface(g->renderer, g->goal_surface);
     if (g->goal_texture) {
       SDL_SetTextureScaleMode(g->goal_texture, SDL_SCALEMODE_LINEAR); // see if this actually matters
     }
+  }
 
+  g->level_number_surface = TTF_RenderText_Blended(g->font, "Level: 1", 8, text_color); // TODO maybe 9 if more levels than 10
+  g->last_cached_level_number = 1;
+  if (g->goal_surface) {
+    g->level_number_texture = SDL_CreateTextureFromSurface(g->renderer, g->level_number_surface);
+    if (g->level_number_texture) {
+      SDL_SetTextureScaleMode(g->level_number_texture, SDL_SCALEMODE_LINEAR);
+    }
   }
 
   g->title_screen = IMG_LoadTexture(g->renderer, "assets/title.png");
@@ -108,6 +115,9 @@ void game_free(struct Game **game) {
 
     SDL_DestroyTexture(g->goal_texture);
     SDL_DestroySurface(g->goal_surface);
+
+    SDL_DestroyTexture(g->level_number_texture);
+    SDL_DestroySurface(g->level_number_surface);
 
     if (g->font)
       TTF_CloseFont(g->font);
