@@ -2,6 +2,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +13,8 @@ bool game_init_sdl(struct Game *g) {
     return false;
   }
 
-  g->window = SDL_CreateWindow(WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
+  g->window = SDL_CreateWindow(WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT,
+                               SDL_WINDOW_RESIZABLE);
   if (!g->window) {
     fprintf(stderr, "Error creating Window: %s\n", SDL_GetError());
     return false;
@@ -25,6 +27,29 @@ bool game_init_sdl(struct Game *g) {
   }
   SDL_SetRenderLogicalPresentation(g->renderer, WINDOW_WIDTH, WINDOW_HEIGHT,
                                    SDL_LOGICAL_PRESENTATION_LETTERBOX);
+
+  if (!TTF_Init()) {
+    fprintf(stderr, "Error initializing SDL_ttf: %s\n", SDL_GetError());
+    return false;
+  }
+
+  g->font = TTF_OpenFont("assets/font.ttf", 256);
+  if (!g->font) {
+    fprintf(stderr, "Error loading font: %s\n", SDL_GetError());
+    return false;
+  }
+
+  // Goal text
+  SDL_Color text_color = {.r = 255, .g = 255, .b = 255, .a = 255};
+  g->goal_surface = TTF_RenderText_Blended(g->font, "Goal", 4, text_color);
+  if (g->goal_surface) {
+
+    g->goal_texture = SDL_CreateTextureFromSurface(g->renderer, g->goal_surface);
+    if (g->goal_texture) {
+      SDL_SetTextureScaleMode(g->goal_texture, SDL_SCALEMODE_LINEAR); // see if this actually matters
+    }
+
+  }
 
   g->title_screen = IMG_LoadTexture(g->renderer, "assets/title.png");
   if (g->title_screen == NULL) {
@@ -62,6 +87,7 @@ bool game_new(struct Game **game) {
   struct Game *g = *game;
 
   if (!game_init_sdl(g)) {
+    game_free(game);
     return false;
   }
 
@@ -73,9 +99,18 @@ bool game_new(struct Game **game) {
 void game_free(struct Game **game) {
   if (*game) {
     struct Game *g = *game;
-    SDL_DestroyTexture(g->title_screen);
-    SDL_DestroyTexture(g->play_button_reg);
-    SDL_DestroyTexture(g->play_button_hover);
+    if (g->title_screen)
+      SDL_DestroyTexture(g->title_screen);
+    if (g->play_button_reg)
+      SDL_DestroyTexture(g->play_button_reg);
+    if (g->play_button_hover)
+      SDL_DestroyTexture(g->play_button_hover);
+
+    SDL_DestroyTexture(g->goal_texture);
+    SDL_DestroySurface(g->goal_surface);
+
+    if (g->font)
+      TTF_CloseFont(g->font);
 
     if (g->renderer) {
       SDL_DestroyRenderer(g->renderer);
@@ -87,6 +122,7 @@ void game_free(struct Game **game) {
       g->window = NULL;
     }
 
+    TTF_Quit();
     SDL_Quit();
 
     free(g);

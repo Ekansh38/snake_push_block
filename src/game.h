@@ -1,5 +1,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,10 +22,19 @@ struct Game {
   double delta_time;
   int scene; // 0 = start screen, 1 = level one, etc.
   SDL_Texture *title_screen;
+  TTF_Font *font;
 
   // play button
   SDL_Texture *play_button_reg;
   SDL_Texture *play_button_hover;
+
+  // goal text
+  SDL_Surface *goal_surface;
+  SDL_Texture *goal_texture;
+
+  // last cached vars
+
+  int last_cached_level_number;
 };
 
 bool game_init_sdl(struct Game *g);
