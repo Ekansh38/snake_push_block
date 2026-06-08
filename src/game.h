@@ -14,30 +14,45 @@
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 
+struct SnekSegment {
+    int x;
+    int y;
+};
+
 struct Game {
-  SDL_Window *window;
-  SDL_Renderer *renderer;
-  SDL_Event event;
-  bool running;
-  double delta_time;
-  int scene; // 0 = start screen, 1 = level one, etc.
-  SDL_Texture *title_screen;
-  TTF_Font *font;
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    SDL_Event event;
+    bool running;
+    double delta_time;
+    int scene; // 0 = start screen, 1 = level one, etc.
+    SDL_Texture *title_screen;
+    TTF_Font *font;
 
-  // play button
-  SDL_Texture *play_button_reg;
-  SDL_Texture *play_button_hover;
+    // play button
+    SDL_Texture *play_button_reg;
+    SDL_Texture *play_button_hover;
 
-  // goal text
-  SDL_Surface *goal_surface;
-  SDL_Texture *goal_texture;
+    // goal text
+    SDL_Surface *goal_surface;
+    SDL_Texture *goal_texture;
 
-  // last cached vars
+    // level number text
 
-  int last_cached_level_number;
-  SDL_Surface *level_number_surface;
-  SDL_Texture *level_number_texture;
+    int last_cached_level_number;
+    SDL_Surface *level_number_surface;
+    SDL_Texture *level_number_texture;
 
+    // timer text
+    
+    float timer_value;
+    float last_cached_timer_number;
+    SDL_Surface *timer_text_surface;
+    SDL_Texture *timer_text_texture;
+
+    // actual snake
+
+    SnekSegment snake[64];
 };
 
 bool game_init_sdl(struct Game *g);
