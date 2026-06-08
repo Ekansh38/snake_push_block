@@ -107,8 +107,9 @@ void game_events(struct Game *g) {
                     // setup level 1 stuff
 
                     g->timer_value = 0; // ik its already zero but who cares?
-                    g->movement_interval = 0.1;
+                    g->movement_interval = 0.15;
                     // setup snake itself
+                    g->snake[4] = (struct SnekSegment){.x = 8, .y = 9};
                     g->snake[3] = (struct SnekSegment){.x = 9, .y = 9};
                     g->snake[2] = (struct SnekSegment){.x = 10, .y = 9};
                     g->snake[1] = (struct SnekSegment){.x = 11, .y = 9};
