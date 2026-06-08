@@ -2,6 +2,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_ttf/SDL_ttf.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,12 +56,40 @@ void game_events(struct Game *g) {
         case SDL_EVENT_QUIT:
             g->running = false;
             break;
-        case SDL_EVENT_KEY_DOWN:
+        case SDL_EVENT_KEY_DOWN: {
+            enum Direction new_direction = g->direction;
             switch (g->event.key.scancode) {
+            case SDL_SCANCODE_W:
+            case SDL_SCANCODE_UP:
+                new_direction = UP;
+                break;
+            case SDL_SCANCODE_A:
+            case SDL_SCANCODE_LEFT:
+                new_direction = LEFT;
+                break;
+            case SDL_SCANCODE_S:
+            case SDL_SCANCODE_DOWN:
+                new_direction = DOWN;
+                break;
+            case SDL_SCANCODE_D:
+            case SDL_SCANCODE_RIGHT:
+                new_direction = RIGHT;
+                break;
             default:
                 break;
             }
-            break;
+            // reject 180 turns
+            if (new_direction != g->direction) {
+                bool opposite =
+                    (new_direction == UP && g->direction == DOWN) ||
+                    (new_direction == DOWN && g->direction == UP) ||
+                    (new_direction == LEFT && g->direction == RIGHT) ||
+                    (new_direction == RIGHT && g->direction == LEFT);
+                if (!opposite) {
+                    g->direction = new_direction;
+                }
+            }
+        } break;
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
             // jonathan blow
             if (g->event.button.button == 1) { // left click
@@ -76,11 +105,17 @@ void game_events(struct Game *g) {
                     g->scene = 1; // go to level 1
 
                     // setup level 1 stuff
+
                     g->timer_value = 0; // ik its already zero but who cares?
+                    g->movement_interval = 0.1;
                     // setup snake itself
-                    g->snake[2] = (struct SnekSegment){.x = 8, .y = 10};
-                    g->snake[1] = (struct SnekSegment){.x = 9, .y = 10};
-                    g->snake[0] = (struct SnekSegment){.x = 10, .y = 10};
+                    g->snake[3] = (struct SnekSegment){.x = 9, .y = 9};
+                    g->snake[2] = (struct SnekSegment){.x = 10, .y = 9};
+                    g->snake[1] = (struct SnekSegment){.x = 11, .y = 9};
+                    g->snake[0] = (struct SnekSegment){.x = 12, .y = 9};
+                    g->snake_length = 4;
+                    g->direction = RIGHT;
+                    g->dead = false;
                 }
             }
             break;
@@ -123,6 +158,8 @@ void game_draw(struct Game *g) {
         SDL_FRect top_line_rect = {.x = 0, .y = 76, .w = WINDOW_WIDTH, .h = 4};
         SDL_RenderFillRect(g->renderer, &top_line_rect);
 
+        int top_area = 80;
+
         // TODO!! Update title screen
 
         // draw middle line
@@ -140,6 +177,30 @@ void game_draw(struct Game *g) {
         int grid_height = 640;
         int number_of_columns = grid_width / cell_size; // 20
         int number_of_rows = grid_height / cell_size;   // 20
+                                                        //
+        // draw the snake, head is red, body green
+
+        SDL_SetRenderDrawColor(g->renderer, 255, 0, 0, 255); // red head
+                                                             //
+        SDL_FRect head_rect = {.x = (g->snake[0].x * cell_size) + grid_width,
+                               .y = (g->snake[0].y * cell_size) + top_area,
+                               .w = cell_size + 2,
+                               .h = cell_size + 2};
+        SDL_RenderFillRect(g->renderer, &head_rect);
+
+        if (!g->dead) {
+            SDL_SetRenderDrawColor(g->renderer, 0, 255, 0, 255); // green body
+        }
+
+        for (int i = 1; i < g->snake_length; i++) {
+
+            SDL_FRect body_rect = {.x =
+                                       (g->snake[i].x * cell_size) + grid_width,
+                                   .y = (g->snake[i].y * cell_size) + top_area,
+                                   .w = cell_size + 2,
+                                   .h = cell_size + 2};
+            SDL_RenderFillRect(g->renderer, &body_rect);
+        }
 
         SDL_SetRenderDrawColor(g->renderer, 70, 70, 70, 255);
 
@@ -229,7 +290,7 @@ void game_draw(struct Game *g) {
 
         // timer stuff
         g->timer_value += g->delta_time;
-        if (g->timer_value != g->last_cached_timer_number) {
+        if (fabs(g->timer_value - g->last_cached_timer_number) > 0.1f) {
             update_timer(g, g->timer_value);
         }
 
@@ -243,6 +304,59 @@ void game_draw(struct Game *g) {
                                 .h = th};
         SDL_RenderTexture(g->renderer, g->timer_text_texture, NULL,
                           &timer_rect);
+
+        if (!g->dead) {
+            g->movement_timer += g->delta_time;
+            if (g->movement_timer >= g->movement_interval) {
+                g->movement_timer = 0;
+
+                int new_x = g->snake[0].x;
+                int new_y = g->snake[0].y;
+
+                switch (g->direction) {
+                case UP:
+                    new_y -= 1;
+                    break;
+                case DOWN:
+                    new_y += 1;
+                    break;
+                case LEFT:
+                    new_x -= 1;
+                    break;
+                case RIGHT:
+                    new_x += 1;
+                    break;
+                }
+
+                // wrap
+                new_x = (new_x + 20) % 20;
+                new_y = (new_y + 20) % 20;
+
+                // self collision
+                for (int i = 0; i < g->snake_length; i++) {
+                    if (g->snake[i].x == new_x && g->snake[i].y == new_y) {
+                        for (int i = g->snake_length - 1; i > 0; i--) {
+                            g->snake[i] = g->snake[i - 1];
+                        }
+                        // move head
+                        g->snake[0].x = new_x;
+                        g->snake[0].y = new_y;
+                        g->dead = true;
+                        break;
+                    }
+                }
+
+                if (!g->dead) {
+                    // move body
+                    for (int i = g->snake_length - 1; i > 0; i--) {
+                        g->snake[i] = g->snake[i - 1];
+                    }
+                    // move head
+                    g->snake[0].x = new_x;
+                    g->snake[0].y = new_y;
+                }
+            }
+        }
     }
 
     SDL_RenderPresent(g->renderer);

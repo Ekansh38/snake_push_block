@@ -14,6 +14,13 @@
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 
+enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+};
+
 struct SnekSegment {
     int x;
     int y;
@@ -52,7 +59,12 @@ struct Game {
 
     // actual snake
 
-    SnekSegment snake[64];
+    struct SnekSegment snake[64];
+    float movement_timer;
+    float movement_interval;
+    int snake_length;
+    enum Direction direction;
+    bool dead;
 };
 
 bool game_init_sdl(struct Game *g);
