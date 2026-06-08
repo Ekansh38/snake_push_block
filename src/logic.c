@@ -109,12 +109,14 @@ void game_events(struct Game *g) {
                     g->timer_value = 0; // ik its already zero but who cares?
                     g->movement_interval = 0.15;
                     // setup snake itself
+                    g->snake[6] = (struct SnekSegment){.x = 6, .y = 9};
+                    g->snake[5] = (struct SnekSegment){.x = 7, .y = 9};
                     g->snake[4] = (struct SnekSegment){.x = 8, .y = 9};
                     g->snake[3] = (struct SnekSegment){.x = 9, .y = 9};
                     g->snake[2] = (struct SnekSegment){.x = 10, .y = 9};
                     g->snake[1] = (struct SnekSegment){.x = 11, .y = 9};
                     g->snake[0] = (struct SnekSegment){.x = 12, .y = 9};
-                    g->snake_length = 4;
+                    g->snake_length = 7;
                     g->direction = RIGHT;
                     g->dead = false;
                 }
@@ -179,6 +181,54 @@ void game_draw(struct Game *g) {
         int number_of_columns = grid_width / cell_size; // 20
         int number_of_rows = grid_height / cell_size;   // 20
                                                         //
+        if (!g->dead) {
+            g->movement_timer += g->delta_time;
+            if (g->movement_timer >= g->movement_interval) {
+                g->movement_timer = 0;
+
+                int new_x = g->snake[0].x;
+                int new_y = g->snake[0].y;
+
+                switch (g->direction) {
+                case UP:
+                    new_y -= 1;
+                    break;
+                case DOWN:
+                    new_y += 1;
+                    break;
+                case LEFT:
+                    new_x -= 1;
+                    break;
+                case RIGHT:
+                    new_x += 1;
+                    break;
+                }
+
+                // wrap
+                new_x = (new_x + 20) % 20;
+                new_y = (new_y + 20) % 20;
+
+                // self collision
+                for (int i = 0; i < g->snake_length; i++) {
+                    if (g->snake[i].x == new_x && g->snake[i].y == new_y) {
+                        g->dead = true;
+                        break;
+                    }
+                }
+
+                if (!g->dead) {
+                    // move body
+                    for (int i = g->snake_length - 1; i > 0; i--) {
+                        g->snake[i] = g->snake[i - 1];
+                    }
+                    // move head
+                    g->snake[0].x = new_x;
+                    g->snake[0].y = new_y;
+                }
+            }
+        }
+
+
         // draw the snake, head is red, body green
 
         SDL_SetRenderDrawColor(g->renderer, 255, 0, 0, 255); // red head
@@ -191,6 +241,8 @@ void game_draw(struct Game *g) {
 
         if (!g->dead) {
             SDL_SetRenderDrawColor(g->renderer, 0, 255, 0, 255); // green body
+        } else {
+            SDL_SetRenderDrawColor(g->renderer, 0, 130, 0, 255); // green body
         }
 
         for (int i = 1; i < g->snake_length; i++) {
@@ -306,58 +358,6 @@ void game_draw(struct Game *g) {
         SDL_RenderTexture(g->renderer, g->timer_text_texture, NULL,
                           &timer_rect);
 
-        if (!g->dead) {
-            g->movement_timer += g->delta_time;
-            if (g->movement_timer >= g->movement_interval) {
-                g->movement_timer = 0;
-
-                int new_x = g->snake[0].x;
-                int new_y = g->snake[0].y;
-
-                switch (g->direction) {
-                case UP:
-                    new_y -= 1;
-                    break;
-                case DOWN:
-                    new_y += 1;
-                    break;
-                case LEFT:
-                    new_x -= 1;
-                    break;
-                case RIGHT:
-                    new_x += 1;
-                    break;
-                }
-
-                // wrap
-                new_x = (new_x + 20) % 20;
-                new_y = (new_y + 20) % 20;
-
-                // self collision
-                for (int i = 0; i < g->snake_length; i++) {
-                    if (g->snake[i].x == new_x && g->snake[i].y == new_y) {
-                        for (int i = g->snake_length - 1; i > 0; i--) {
-                            g->snake[i] = g->snake[i - 1];
-                        }
-                        // move head
-                        g->snake[0].x = new_x;
-                        g->snake[0].y = new_y;
-                        g->dead = true;
-                        break;
-                    }
-                }
-
-                if (!g->dead) {
-                    // move body
-                    for (int i = g->snake_length - 1; i > 0; i--) {
-                        g->snake[i] = g->snake[i - 1];
-                    }
-                    // move head
-                    g->snake[0].x = new_x;
-                    g->snake[0].y = new_y;
-                }
-            }
-        }
     }
 
     SDL_RenderPresent(g->renderer);
