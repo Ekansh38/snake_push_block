@@ -4,9 +4,8 @@ A snake game with block-pushing mechanics, built with C and SDL3.
 
 ## images
 
-<img width="1512" height="943" alt="image2" src="https://github.com/user-attachments/assets/9f8e01fc-e6cf-44f7-896c-3b0caadba876" />
-<img width="1512" height="946" alt="image1" src="https://github.com/user-attachments/assets/2f11d1e2-8c21-405b-a761-305cc9d83246" />
 <img width="1512" height="914" alt="imag4" src="https://github.com/user-attachments/assets/9f7def38-4062-45dd-b852-dfa658a9ecd2" />
+<img width="1512" height="946" alt="image1" src="https://github.com/user-attachments/assets/2f11d1e2-8c21-405b-a761-305cc9d83246" />
 <img width="1512" height="924" alt="imag3" src="https://github.com/user-attachments/assets/4df3bcdc-e664-44a0-97ad-8439a139e46b" />
 
 
