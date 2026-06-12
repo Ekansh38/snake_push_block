@@ -212,7 +212,7 @@ void load_level(struct Game *g, int level) {
         g->snake[2] = (struct SnekSegment){.x = 11, .y = 18};
         g->snake[1] = (struct SnekSegment){.x = 12, .y = 18};
         g->snake[0] = (struct SnekSegment){.x = 13, .y = 18};
-        g->direction = LEFT;
+        g->direction = RIGHT;
         g->snake_length = 7;
 
         // Diamond/Star pattern - all 5 colors
