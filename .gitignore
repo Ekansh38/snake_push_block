@@ -1,3 +1,5 @@
-game
-game.dSYM/
+snake_push_block
+snake_push_block.dSYM/
+build/
 tmp/
+.DS_Store

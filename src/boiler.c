@@ -7,6 +7,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Resolves relative to the executable dir (or Resources/ inside a .app
+// bundle) so assets load no matter where the game is launched from.
+static const char *asset_path(const char *rel) {
+    static char buf[1024];
+    const char *base = SDL_GetBasePath();
+    snprintf(buf, sizeof(buf), "%s%s", base ? base : "", rel);
+    return buf;
+}
+
 bool game_init_sdl(struct Game *g) {
     if (!SDL_Init(SDL_FLAGS)) {
         fprintf(stderr, "Error initializing SDL3: %s\n", SDL_GetError());
@@ -33,7 +42,7 @@ bool game_init_sdl(struct Game *g) {
         return false;
     }
 
-    g->font = TTF_OpenFont("assets/font.ttf", 256);
+    g->font = TTF_OpenFont(asset_path("assets/font.ttf"), 256);
     if (!g->font) {
         fprintf(stderr, "Error loading font: %s\n", SDL_GetError());
         return false;
@@ -119,7 +128,7 @@ bool game_init_sdl(struct Game *g) {
         }
     }
 
-    g->title_screen = IMG_LoadTexture(g->renderer, "assets/title.png");
+    g->title_screen = IMG_LoadTexture(g->renderer, asset_path("assets/title.png"));
     if (g->title_screen == NULL) {
         SDL_Log("Failed to load texture: %s", SDL_GetError());
         return false;
@@ -128,7 +137,7 @@ bool game_init_sdl(struct Game *g) {
 
     // play button assets
     g->play_button_reg =
-        IMG_LoadTexture(g->renderer, "assets/play_button_reg.png");
+        IMG_LoadTexture(g->renderer, asset_path("assets/play_button_reg.png"));
     if (g->play_button_reg == NULL) {
         SDL_Log("Failed to load texture: %s", SDL_GetError());
         return false;
@@ -136,7 +145,7 @@ bool game_init_sdl(struct Game *g) {
     SDL_SetTextureScaleMode(g->play_button_reg, SDL_SCALEMODE_NEAREST);
 
     g->play_button_hover =
-        IMG_LoadTexture(g->renderer, "assets/play_button_hover.png");
+        IMG_LoadTexture(g->renderer, asset_path("assets/play_button_hover.png"));
     if (g->play_button_hover == NULL) {
         SDL_Log("Failed to load texture: %s", SDL_GetError());
         return false;
