@@ -291,6 +291,7 @@ void push(struct Game *g, int number_of_columns, int number_of_rows) {
             while (chain_len < 100) {
                 check_x =
                     (check_x + dx + number_of_columns) % number_of_columns;
+
                 check_y = (check_y + dy + number_of_rows) % number_of_rows;
                 bool found = false;
                 for (int j = 0; j < g->num_of_blocks; j++) {
