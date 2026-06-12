@@ -38,15 +38,15 @@ void load_level(struct Game *g, int level) {
         g->goal_blocks[6] = (struct Block){.x = 6, .y = 7, .type = YELLOW};
         g->goal_blocks[7] = (struct Block){.x = 7, .y = 6, .type = YELLOW};
 
-        // Scattered face pieces (avoiding edges)
-        g->current_blocks[0] = (struct Block){.x = 3, .y = 2, .type = YELLOW};
-        g->current_blocks[1] = (struct Block){.x = 6, .y = 2, .type = YELLOW};
-        g->current_blocks[2] = (struct Block){.x = 2, .y = 4, .type = YELLOW};
-        g->current_blocks[3] = (struct Block){.x = 7, .y = 4, .type = YELLOW};
-        g->current_blocks[4] = (struct Block){.x = 3, .y = 6, .type = YELLOW};
-        g->current_blocks[5] = (struct Block){.x = 6, .y = 6, .type = YELLOW};
-        g->current_blocks[6] = (struct Block){.x = 4, .y = 5, .type = YELLOW};
-        g->current_blocks[7] = (struct Block){.x = 5, .y = 5, .type = YELLOW};
+        // Scattered face pieces (more random, including edges)
+        g->current_blocks[0] = (struct Block){.x = 0, .y = 1, .type = YELLOW};
+        g->current_blocks[1] = (struct Block){.x = 9, .y = 3, .type = YELLOW};
+        g->current_blocks[2] = (struct Block){.x = 1, .y = 8, .type = YELLOW};
+        g->current_blocks[3] = (struct Block){.x = 8, .y = 0, .type = YELLOW};
+        g->current_blocks[4] = (struct Block){.x = 4, .y = 9, .type = YELLOW};
+        g->current_blocks[5] = (struct Block){.x = 6, .y = 3, .type = YELLOW};
+        g->current_blocks[6] = (struct Block){.x = 2, .y = 5, .type = YELLOW};
+        g->current_blocks[7] = (struct Block){.x = 7, .y = 7, .type = YELLOW};
 
         g->cell_size = 64;
         g->num_of_blocks = 8;
@@ -202,6 +202,150 @@ void load_level(struct Game *g, int level) {
 
         g->cell_size = 32;
         g->num_of_blocks = 23;
+    } else if (level == 5) {
+        g->movement_interval = 0.12;
+        // setup snake itself (20x22 grid)
+        g->snake[6] = (struct SnekSegment){.x = 7, .y = 18};
+        g->snake[5] = (struct SnekSegment){.x = 8, .y = 18};
+        g->snake[4] = (struct SnekSegment){.x = 9, .y = 18};
+        g->snake[3] = (struct SnekSegment){.x = 10, .y = 18};
+        g->snake[2] = (struct SnekSegment){.x = 11, .y = 18};
+        g->snake[1] = (struct SnekSegment){.x = 12, .y = 18};
+        g->snake[0] = (struct SnekSegment){.x = 13, .y = 18};
+        g->direction = LEFT;
+        g->snake_length = 7;
+
+        // Diamond/Star pattern - all 5 colors
+        // Center (YELLOW)
+        g->goal_blocks[0] = (struct Block){.x = 10, .y = 10, .type = YELLOW};
+        // Top point (RED)
+        g->goal_blocks[1] = (struct Block){.x = 10, .y = 5, .type = RED};
+        g->goal_blocks[2] = (struct Block){.x = 9, .y = 6, .type = RED};
+        g->goal_blocks[3] = (struct Block){.x = 11, .y = 6, .type = RED};
+        // Right point (GREEN)
+        g->goal_blocks[4] = (struct Block){.x = 15, .y = 10, .type = GREEN};
+        g->goal_blocks[5] = (struct Block){.x = 14, .y = 9, .type = GREEN};
+        g->goal_blocks[6] = (struct Block){.x = 14, .y = 11, .type = GREEN};
+        // Bottom point (BLUE)
+        g->goal_blocks[7] = (struct Block){.x = 10, .y = 15, .type = BLUE};
+        g->goal_blocks[8] = (struct Block){.x = 9, .y = 14, .type = BLUE};
+        g->goal_blocks[9] = (struct Block){.x = 11, .y = 14, .type = BLUE};
+        // Left point (PINK)
+        g->goal_blocks[10] = (struct Block){.x = 5, .y = 10, .type = PINK};
+        g->goal_blocks[11] = (struct Block){.x = 6, .y = 9, .type = PINK};
+        g->goal_blocks[12] = (struct Block){.x = 6, .y = 11, .type = PINK};
+        // Inner ring (mixed colors)
+        g->goal_blocks[13] = (struct Block){.x = 8, .y = 8, .type = YELLOW};
+        g->goal_blocks[14] = (struct Block){.x = 12, .y = 8, .type = RED};
+        g->goal_blocks[15] = (struct Block){.x = 12, .y = 12, .type = GREEN};
+        g->goal_blocks[16] = (struct Block){.x = 8, .y = 12, .type = BLUE};
+
+        // Scattered starting positions (all 5 colors)
+        g->current_blocks[0] = (struct Block){.x = 3, .y = 3, .type = RED};
+        g->current_blocks[1] = (struct Block){.x = 17, .y = 3, .type = RED};
+        g->current_blocks[2] = (struct Block){.x = 4, .y = 18, .type = RED};
+        g->current_blocks[3] = (struct Block){.x = 16, .y = 17, .type = RED};
+        g->current_blocks[4] = (struct Block){.x = 2, .y = 8, .type = GREEN};
+        g->current_blocks[5] = (struct Block){.x = 18, .y = 12, .type = GREEN};
+        g->current_blocks[6] = (struct Block){.x = 5, .y = 5, .type = GREEN};
+        g->current_blocks[7] = (struct Block){.x = 15, .y = 15, .type = GREEN};
+        g->current_blocks[8] = (struct Block){.x = 7, .y = 3, .type = BLUE};
+        g->current_blocks[9] = (struct Block){.x = 13, .y = 4, .type = BLUE};
+        g->current_blocks[10] = (struct Block){.x = 3, .y = 13, .type = BLUE};
+        g->current_blocks[11] = (struct Block){.x = 17, .y = 14, .type = BLUE};
+        g->current_blocks[12] = (struct Block){.x = 8, .y = 17, .type = PINK};
+        g->current_blocks[13] = (struct Block){.x = 12, .y = 3, .type = PINK};
+        g->current_blocks[14] = (struct Block){.x = 18, .y = 7, .type = PINK};
+        g->current_blocks[15] = (struct Block){.x = 2, .y = 16, .type = YELLOW};
+        g->current_blocks[16] = (struct Block){.x = 17, .y = 8, .type = YELLOW};
+
+        g->cell_size = 32;
+        g->num_of_blocks = 17;
+    } else if (level == 6) {
+        g->movement_interval = 0.1;
+        // setup snake itself (20x22 grid)
+        g->snake[7] = (struct SnekSegment){.x = 7, .y = 19};
+        g->snake[6] = (struct SnekSegment){.x = 8, .y = 19};
+        g->snake[5] = (struct SnekSegment){.x = 9, .y = 19};
+        g->snake[4] = (struct SnekSegment){.x = 10, .y = 19};
+        g->snake[3] = (struct SnekSegment){.x = 11, .y = 19};
+        g->snake[2] = (struct SnekSegment){.x = 12, .y = 19};
+        g->snake[1] = (struct SnekSegment){.x = 13, .y = 19};
+        g->snake[0] = (struct SnekSegment){.x = 14, .y = 19};
+        g->direction = UP;
+        g->snake_length = 8;
+
+        // Complex checkerboard pattern with letters/shapes
+        // Top row pattern (YELLOW and RED)
+        g->goal_blocks[0] = (struct Block){.x = 3, .y = 3, .type = YELLOW};
+        g->goal_blocks[1] = (struct Block){.x = 5, .y = 3, .type = RED};
+        g->goal_blocks[2] = (struct Block){.x = 7, .y = 3, .type = YELLOW};
+        g->goal_blocks[3] = (struct Block){.x = 9, .y = 3, .type = RED};
+        g->goal_blocks[4] = (struct Block){.x = 11, .y = 3, .type = YELLOW};
+        g->goal_blocks[5] = (struct Block){.x = 13, .y = 3, .type = RED};
+        g->goal_blocks[6] = (struct Block){.x = 15, .y = 3, .type = YELLOW};
+        g->goal_blocks[7] = (struct Block){.x = 17, .y = 3, .type = RED};
+        // Second row (GREEN and BLUE)
+        g->goal_blocks[8] = (struct Block){.x = 3, .y = 6, .type = GREEN};
+        g->goal_blocks[9] = (struct Block){.x = 6, .y = 6, .type = BLUE};
+        g->goal_blocks[10] = (struct Block){.x = 9, .y = 6, .type = GREEN};
+        g->goal_blocks[11] = (struct Block){.x = 12, .y = 6, .type = BLUE};
+        g->goal_blocks[12] = (struct Block){.x = 15, .y = 6, .type = GREEN};
+        g->goal_blocks[13] = (struct Block){.x = 17, .y = 6, .type = BLUE};
+        // Center cross (PINK)
+        g->goal_blocks[14] = (struct Block){.x = 10, .y = 9, .type = PINK};
+        g->goal_blocks[15] = (struct Block){.x = 9, .y = 10, .type = PINK};
+        g->goal_blocks[16] = (struct Block){.x = 10, .y = 10, .type = PINK};
+        g->goal_blocks[17] = (struct Block){.x = 11, .y = 10, .type = PINK};
+        g->goal_blocks[18] = (struct Block){.x = 10, .y = 11, .type = PINK};
+        // Third row (YELLOW and RED)
+        g->goal_blocks[19] = (struct Block){.x = 4, .y = 14, .type = YELLOW};
+        g->goal_blocks[20] = (struct Block){.x = 7, .y = 14, .type = RED};
+        g->goal_blocks[21] = (struct Block){.x = 10, .y = 14, .type = YELLOW};
+        g->goal_blocks[22] = (struct Block){.x = 13, .y = 14, .type = RED};
+        g->goal_blocks[23] = (struct Block){.x = 16, .y = 14, .type = YELLOW};
+        // Bottom row (GREEN and BLUE)
+        g->goal_blocks[24] = (struct Block){.x = 3, .y = 17, .type = GREEN};
+        g->goal_blocks[25] = (struct Block){.x = 6, .y = 17, .type = BLUE};
+        g->goal_blocks[26] = (struct Block){.x = 9, .y = 17, .type = GREEN};
+        g->goal_blocks[27] = (struct Block){.x = 12, .y = 17, .type = BLUE};
+        g->goal_blocks[28] = (struct Block){.x = 15, .y = 17, .type = GREEN};
+        g->goal_blocks[29] = (struct Block){.x = 17, .y = 17, .type = BLUE};
+
+        // Heavily scattered starting positions (all 5 colors, maximum chaos)
+        g->current_blocks[0] = (struct Block){.x = 1, .y = 1, .type = YELLOW};
+        g->current_blocks[1] = (struct Block){.x = 19, .y = 1, .type = RED};
+        g->current_blocks[2] = (struct Block){.x = 0, .y = 5, .type = GREEN};
+        g->current_blocks[3] = (struct Block){.x = 18, .y = 4, .type = BLUE};
+        g->current_blocks[4] = (struct Block){.x = 2, .y = 9, .type = PINK};
+        g->current_blocks[5] = (struct Block){.x = 19, .y = 8, .type = YELLOW};
+        g->current_blocks[6] = (struct Block){.x = 1, .y = 12, .type = RED};
+        g->current_blocks[7] = (struct Block){.x = 18, .y = 15, .type = GREEN};
+        g->current_blocks[8] = (struct Block){.x = 0, .y = 18, .type = BLUE};
+        g->current_blocks[9] = (struct Block){.x = 19, .y = 20, .type = PINK};
+        g->current_blocks[10] = (struct Block){.x = 5, .y = 0, .type = YELLOW};
+        g->current_blocks[11] = (struct Block){.x = 14, .y = 2, .type = RED};
+        g->current_blocks[12] = (struct Block){.x = 8, .y = 21, .type = GREEN};
+        g->current_blocks[13] = (struct Block){.x = 11, .y = 20, .type = BLUE};
+        g->current_blocks[14] = (struct Block){.x = 4, .y = 8, .type = PINK};
+        g->current_blocks[15] = (struct Block){.x = 16, .y = 12, .type = YELLOW};
+        g->current_blocks[16] = (struct Block){.x = 7, .y = 7, .type = RED};
+        g->current_blocks[17] = (struct Block){.x = 13, .y = 13, .type = GREEN};
+        g->current_blocks[18] = (struct Block){.x = 2, .y = 20, .type = BLUE};
+        g->current_blocks[19] = (struct Block){.x = 17, .y = 21, .type = PINK};
+        g->current_blocks[20] = (struct Block){.x = 10, .y = 1, .type = YELLOW};
+        g->current_blocks[21] = (struct Block){.x = 5, .y = 11, .type = RED};
+        g->current_blocks[22] = (struct Block){.x = 15, .y = 9, .type = GREEN};
+        g->current_blocks[23] = (struct Block){.x = 3, .y = 15, .type = BLUE};
+        g->current_blocks[24] = (struct Block){.x = 12, .y = 5, .type = PINK};
+        g->current_blocks[25] = (struct Block){.x = 8, .y = 13, .type = YELLOW};
+        g->current_blocks[26] = (struct Block){.x = 14, .y = 18, .type = RED};
+        g->current_blocks[27] = (struct Block){.x = 6, .y = 19, .type = GREEN};
+        g->current_blocks[28] = (struct Block){.x = 11, .y = 7, .type = BLUE};
+        g->current_blocks[29] = (struct Block){.x = 9, .y = 16, .type = PINK};
+
+        g->cell_size = 32;
+        g->num_of_blocks = 30;
     }
 }
 void go_to_loss_screen(struct Game *g) {
