@@ -52,6 +52,35 @@ bool game_init_sdl(struct Game *g) {
         }
     }
 
+    // loss screen text, rendered once cuz it never changes
+    SDL_Color death_color = {.r = 255, .g = 80, .b = 80, .a = 255};
+    g->death_surface = TTF_RenderText_Blended(g->font, "You Died", 8, death_color);
+    if (g->death_surface) {
+        g->death_texture =
+            SDL_CreateTextureFromSurface(g->renderer, g->death_surface);
+        if (g->death_texture) {
+            SDL_SetTextureScaleMode(g->death_texture, SDL_SCALEMODE_LINEAR);
+        }
+    }
+
+    g->home_surface = TTF_RenderText_Blended(g->font, "Home", 4, text_color);
+    if (g->home_surface) {
+        g->home_texture =
+            SDL_CreateTextureFromSurface(g->renderer, g->home_surface);
+        if (g->home_texture) {
+            SDL_SetTextureScaleMode(g->home_texture, SDL_SCALEMODE_LINEAR);
+        }
+    }
+
+    g->retry_surface = TTF_RenderText_Blended(g->font, "Retry", 5, text_color);
+    if (g->retry_surface) {
+        g->retry_texture =
+            SDL_CreateTextureFromSurface(g->renderer, g->retry_surface);
+        if (g->retry_texture) {
+            SDL_SetTextureScaleMode(g->retry_texture, SDL_SCALEMODE_LINEAR);
+        }
+    }
+
     g->level_number_surface = TTF_RenderText_Blended(
         g->font, "Level: 1", 8,
         text_color);
@@ -144,6 +173,15 @@ void game_free(struct Game **game) {
 
         SDL_DestroySurface(g->timer_text_surface);
         SDL_DestroyTexture(g->timer_text_texture);
+
+        SDL_DestroyTexture(g->death_texture);
+        SDL_DestroySurface(g->death_surface);
+
+        SDL_DestroyTexture(g->home_texture);
+        SDL_DestroySurface(g->home_surface);
+
+        SDL_DestroyTexture(g->retry_texture);
+        SDL_DestroySurface(g->retry_surface);
 
         if (g->font)
             TTF_CloseFont(g->font);

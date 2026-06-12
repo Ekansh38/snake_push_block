@@ -89,6 +89,15 @@ struct Game {
     int num_of_blocks;
 
     bool stopped;
+
+    // loss screen, death_scene remembers the level for retry
+    int death_scene;
+    SDL_Surface *death_surface;
+    SDL_Texture *death_texture;
+    SDL_Surface *home_surface;
+    SDL_Texture *home_texture;
+    SDL_Surface *retry_surface;
+    SDL_Texture *retry_texture;
 };
 
 bool game_init_sdl(struct Game *g);

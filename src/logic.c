@@ -9,6 +9,135 @@
 #include <string.h>
 
 void get_mouse_pos(struct Game *g, float *x, float *y);
+void update_timer(struct Game *g, float number);
+
+void load_level(struct Game *g, int level) {
+
+    g->timer_value = 0;
+    g->snake_length = 3;
+    g->dead = false;
+    g->stopped = false;
+
+    if (level == 1) {
+        g->movement_interval = 0.23;
+        // setup snake itself
+        g->snake[2] = (struct SnekSegment){.x = 3, .y = 4};
+        g->snake[1] = (struct SnekSegment){.x = 4, .y = 4};
+        g->snake[0] = (struct SnekSegment){.x = 5, .y = 4};
+        g->direction = RIGHT;
+
+        // eyes
+        g->goal_blocks[0] = (struct Block){.x = 2, .y = 2, .type = YELLOW};
+        g->goal_blocks[1] = (struct Block){.x = 7, .y = 2, .type = YELLOW};
+
+        // smile
+        g->goal_blocks[2] = (struct Block){.x = 2, .y = 6, .type = YELLOW};
+        g->goal_blocks[3] = (struct Block){.x = 3, .y = 7, .type = YELLOW};
+        g->goal_blocks[4] = (struct Block){.x = 4, .y = 7, .type = YELLOW};
+        g->goal_blocks[5] = (struct Block){.x = 5, .y = 7, .type = YELLOW};
+        g->goal_blocks[6] = (struct Block){.x = 6, .y = 7, .type = YELLOW};
+        g->goal_blocks[7] = (struct Block){.x = 7, .y = 6, .type = YELLOW};
+
+        // random ahh
+        g->current_blocks[0] = (struct Block){.x = 3, .y = 0, .type = YELLOW};
+        g->current_blocks[1] = (struct Block){.x = 3, .y = 4, .type = YELLOW};
+        g->current_blocks[2] = (struct Block){.x = 6, .y = 3, .type = YELLOW};
+        g->current_blocks[3] = (struct Block){.x = 7, .y = 9, .type = YELLOW};
+        g->current_blocks[4] = (struct Block){.x = 1, .y = 5, .type = YELLOW};
+        g->current_blocks[5] = (struct Block){.x = 8, .y = 5, .type = YELLOW};
+        g->current_blocks[6] = (struct Block){.x = 4, .y = 9, .type = YELLOW};
+        g->current_blocks[7] = (struct Block){.x = 2, .y = 8, .type = YELLOW};
+
+        g->cell_size = 64;
+        g->num_of_blocks = 8;
+    } else if (level == 2) {
+        g->movement_interval = 0.18;
+        // setup snake itself (centered in 40x22 grid)
+        g->snake[2] = (struct SnekSegment){.x = 18, .y = 11};
+        g->snake[1] = (struct SnekSegment){.x = 19, .y = 11};
+        g->snake[0] = (struct SnekSegment){.x = 20, .y = 11};
+        g->direction = RIGHT;
+
+        // Level 2: Cross pattern with RED and GREEN blocks
+        // Center
+        g->goal_blocks[0] = (struct Block){.x = 20, .y = 11, .type = RED};
+        // Vertical arm
+        g->goal_blocks[1] = (struct Block){.x = 20, .y = 8, .type = GREEN};
+        g->goal_blocks[2] = (struct Block){.x = 20, .y = 9, .type = RED};
+        g->goal_blocks[3] = (struct Block){.x = 20, .y = 13, .type = RED};
+        g->goal_blocks[4] = (struct Block){.x = 20, .y = 14, .type = GREEN};
+        // Horizontal arm
+        g->goal_blocks[5] = (struct Block){.x = 17, .y = 11, .type = GREEN};
+        g->goal_blocks[6] = (struct Block){.x = 18, .y = 11, .type = RED};
+        g->goal_blocks[7] = (struct Block){.x = 22, .y = 11, .type = RED};
+        g->goal_blocks[8] = (struct Block){.x = 23, .y = 11, .type = GREEN};
+        // Extra corner blocks
+        g->goal_blocks[9] = (struct Block){.x = 18, .y = 9, .type = GREEN};
+
+        // Scattered starting positions (corners and edges)
+        g->current_blocks[0] = (struct Block){.x = 2, .y = 2, .type = RED};
+        g->current_blocks[1] = (struct Block){.x = 37, .y = 2, .type = GREEN};
+        g->current_blocks[2] = (struct Block){.x = 2, .y = 19, .type = RED};
+        g->current_blocks[3] = (struct Block){.x = 37, .y = 19, .type = RED};
+        g->current_blocks[4] = (struct Block){.x = 20, .y = 1, .type = GREEN};
+        g->current_blocks[5] = (struct Block){.x = 10, .y = 20, .type = GREEN};
+        g->current_blocks[6] = (struct Block){.x = 30, .y = 20, .type = RED};
+        g->current_blocks[7] = (struct Block){.x = 1, .y = 11, .type = RED};
+        g->current_blocks[8] = (struct Block){.x = 38, .y = 11, .type = GREEN};
+        g->current_blocks[9] = (struct Block){.x = 15, .y = 5, .type = GREEN};
+
+        g->cell_size = 32;
+        g->num_of_blocks = 10;
+    } else if (level == 3) {
+        g->movement_interval = 0.15;
+        // setup snake itself (40x22 grid)
+        g->snake[2] = (struct SnekSegment){.x = 10, .y = 20};
+        g->snake[1] = (struct SnekSegment){.x = 10, .y = 21};
+        g->snake[0] = (struct SnekSegment){.x = 11, .y = 21};
+        g->direction = UP;
+
+        // Level 3: Complex spiral pattern with BLUE and PINK
+        // blocks Outer ring
+        g->goal_blocks[0] = (struct Block){.x = 15, .y = 7, .type = BLUE};
+        g->goal_blocks[1] = (struct Block){.x = 20, .y = 7, .type = PINK};
+        g->goal_blocks[2] = (struct Block){.x = 25, .y = 7, .type = BLUE};
+        g->goal_blocks[3] = (struct Block){.x = 25, .y = 11, .type = PINK};
+        g->goal_blocks[4] = (struct Block){.x = 25, .y = 15, .type = BLUE};
+        g->goal_blocks[5] = (struct Block){.x = 20, .y = 15, .type = PINK};
+        g->goal_blocks[6] = (struct Block){.x = 15, .y = 15, .type = BLUE};
+        g->goal_blocks[7] = (struct Block){.x = 15, .y = 11, .type = PINK};
+        // Inner diagonal
+        g->goal_blocks[8] = (struct Block){.x = 18, .y = 9, .type = BLUE};
+        g->goal_blocks[9] = (struct Block){.x = 22, .y = 9, .type = PINK};
+        g->goal_blocks[10] = (struct Block){.x = 22, .y = 13, .type = BLUE};
+        g->goal_blocks[11] = (struct Block){.x = 18, .y = 13, .type = PINK};
+
+        // Extremely scattered challenging positions
+        g->current_blocks[0] = (struct Block){.x = 0, .y = 0, .type = BLUE};
+        g->current_blocks[1] = (struct Block){.x = 39, .y = 0, .type = PINK};
+        g->current_blocks[2] = (struct Block){.x = 0, .y = 21, .type = BLUE};
+        g->current_blocks[3] = (struct Block){.x = 39, .y = 21, .type = PINK};
+        g->current_blocks[4] = (struct Block){.x = 5, .y = 5, .type = BLUE};
+        g->current_blocks[5] = (struct Block){.x = 34, .y = 5, .type = PINK};
+        g->current_blocks[6] = (struct Block){.x = 5, .y = 16, .type = BLUE};
+        g->current_blocks[7] = (struct Block){.x = 34, .y = 16, .type = PINK};
+        g->current_blocks[8] = (struct Block){.x = 20, .y = 0, .type = BLUE};
+        g->current_blocks[9] = (struct Block){.x = 10, .y = 21, .type = PINK};
+        g->current_blocks[10] = (struct Block){.x = 30, .y = 21, .type = BLUE};
+        g->current_blocks[11] = (struct Block){.x = 0, .y = 11, .type = PINK};
+
+        g->cell_size = 32;
+        g->num_of_blocks = 12;
+    }
+}
+
+void go_to_loss_screen(struct Game *g) {
+    g->dead = true;
+    g->death_scene = g->scene;
+    g->scene = -1;
+    // bake the exact final time into the timer texture
+    update_timer(g, g->timer_value);
+}
 
 void push(struct Game *g, int number_of_columns, int number_of_rows) {
 
@@ -39,7 +168,7 @@ void push(struct Game *g, int number_of_columns, int number_of_rows) {
         // self collision
         for (int i = 0; i < g->snake_length; i++) {
             if (g->snake[i].x == new_x && g->snake[i].y == new_y) {
-                g->dead = true;
+                go_to_loss_screen(g);
                 break;
             }
         }
@@ -141,9 +270,9 @@ void push(struct Game *g, int number_of_columns, int number_of_rows) {
                         }
                     }
                 }
-
                 if (correct == g->num_of_blocks) {
-                    printf("YAY");
+                    g->scene++;
+                    load_level(g, g->scene);
                 }
             }
         }
@@ -152,6 +281,18 @@ void push(struct Game *g, int number_of_columns, int number_of_rows) {
 
 void set_color(struct Game *g, enum BlockType type) {
     switch (type) {
+    case GREEN:
+        SDL_SetRenderDrawColor(g->renderer, 0, 255, 0, 255);
+        break;
+    case RED:
+        SDL_SetRenderDrawColor(g->renderer, 255, 0, 0, 255);
+        break;
+    case BLUE:
+        SDL_SetRenderDrawColor(g->renderer, 0, 0, 255, 255);
+        break;
+    case PINK:
+        SDL_SetRenderDrawColor(g->renderer, 255, 105, 180, 255);
+        break;
     case YELLOW:
         SDL_SetRenderDrawColor(g->renderer, 255, 255, 0, 255);
         break;
@@ -211,6 +352,7 @@ void game_events(struct Game *g) {
             if (g->event.key.repeat)
                 break;
             enum Direction new_direction = g->direction;
+            bool is_direction_key = true;
             switch (g->event.key.scancode) {
             case SDL_SCANCODE_W:
             case SDL_SCANCODE_UP:
@@ -229,89 +371,54 @@ void game_events(struct Game *g) {
                 new_direction = RIGHT;
                 break;
             default:
+                is_direction_key = false;
                 break;
             }
             // reject 180 turns
-            if (new_direction != g->direction) {
-                bool opposite =
-                    (new_direction == UP && g->direction == DOWN) ||
-                    (new_direction == DOWN && g->direction == UP) ||
-                    (new_direction == LEFT && g->direction == RIGHT) ||
-                    (new_direction == RIGHT && g->direction == LEFT);
-                if (!opposite) {
-                    g->direction = new_direction;
-                }
+            bool opposite = (new_direction == UP && g->direction == DOWN) ||
+                            (new_direction == DOWN && g->direction == UP) ||
+                            (new_direction == LEFT && g->direction == RIGHT) ||
+                            (new_direction == RIGHT && g->direction == LEFT);
+            if (!opposite) {
+                g->direction = new_direction;
             }
-            if (g->stopped) {
+            // only push for an accepted direction key, otherwise a rejected
+            // 180 (or any random key) would shove in the old direction
+            if (g->stopped && is_direction_key && !opposite) {
                 push(g, 640 / g->cell_size, 640 / g->cell_size);
             }
         } break;
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
             // jonathan blow
             if (g->event.button.button == 1) { // left click
-                float xpos_play = 700;
-                float ypos_play = 500;
                 float mosx;
                 float mosy;
                 get_mouse_pos(g, &mosx, &mosy);
 
-                if (mosx >= xpos_play && mosx <= xpos_play + 180 &&
-                    mosy >= ypos_play && mosy <= ypos_play + 60) {
-                    // change to hover
-                    g->scene = 1; // go to level 1
+                if (g->scene == 0) {
+                    float xpos_play = 700;
+                    float ypos_play = 500;
 
-                    // setup level 1 stuff
+                    if (mosx >= xpos_play && mosx <= xpos_play + 180 &&
+                        mosy >= ypos_play && mosy <= ypos_play + 60) {
+                        g->scene = 1; // go to level 1
+                        load_level(g, 1);
+                    }
+                } else if (g->scene == -1) {
+                    // loss screen buttons, keep in sync with game_draw
+                    float ypos_buttons = 480;
 
-                    g->timer_value = 0; // ik its already zero but who cares?
-                    g->movement_interval = 0.23;
-                    // setup snake itself
-                    g->snake[2] = (struct SnekSegment){.x = 3, .y = 4};
-                    g->snake[1] = (struct SnekSegment){.x = 4, .y = 4};
-                    g->snake[0] = (struct SnekSegment){.x = 5, .y = 4};
-                    g->snake_length = 3;
-                    g->direction = RIGHT;
-                    g->dead = false;
-
-                    // eyes
-                    g->goal_blocks[0] =
-                        (struct Block){.x = 2, .y = 2, .type = YELLOW};
-                    g->goal_blocks[1] =
-                        (struct Block){.x = 7, .y = 2, .type = YELLOW};
-
-                    // smile
-                    g->goal_blocks[2] =
-                        (struct Block){.x = 2, .y = 6, .type = YELLOW};
-                    g->goal_blocks[3] =
-                        (struct Block){.x = 3, .y = 7, .type = YELLOW};
-                    g->goal_blocks[4] =
-                        (struct Block){.x = 4, .y = 7, .type = YELLOW};
-                    g->goal_blocks[5] =
-                        (struct Block){.x = 5, .y = 7, .type = YELLOW};
-                    g->goal_blocks[6] =
-                        (struct Block){.x = 6, .y = 7, .type = YELLOW};
-                    g->goal_blocks[7] =
-                        (struct Block){.x = 7, .y = 6, .type = YELLOW};
-
-                    // random ahh
-                    g->current_blocks[0] =
-                        (struct Block){.x = 3, .y = 0, .type = YELLOW};
-                    g->current_blocks[1] =
-                        (struct Block){.x = 3, .y = 4, .type = YELLOW};
-                    g->current_blocks[2] =
-                        (struct Block){.x = 6, .y = 3, .type = YELLOW};
-                    g->current_blocks[3] =
-                        (struct Block){.x = 7, .y = 9, .type = YELLOW};
-                    g->current_blocks[4] =
-                        (struct Block){.x = 1, .y = 5, .type = YELLOW};
-                    g->current_blocks[5] =
-                        (struct Block){.x = 8, .y = 5, .type = YELLOW};
-                    g->current_blocks[6] =
-                        (struct Block){.x = 4, .y = 9, .type = YELLOW};
-                    g->current_blocks[7] =
-                        (struct Block){.x = 2, .y = 8, .type = YELLOW};
-
-                    g->cell_size = 64;
-                    g->num_of_blocks = 8;
+                    if (mosx >= WINDOW_WIDTH / 2 - 220 &&
+                        mosx <= WINDOW_WIDTH / 2 - 20 &&
+                        mosy >= ypos_buttons && mosy <= ypos_buttons + 70) {
+                        g->scene = 0; // home
+                    } else if (mosx >= WINDOW_WIDTH / 2 + 20 &&
+                               mosx <= WINDOW_WIDTH / 2 + 220 &&
+                               mosy >= ypos_buttons &&
+                               mosy <= ypos_buttons + 70) {
+                        g->scene = g->death_scene; // retry
+                        load_level(g, g->death_scene);
+                    }
                 }
             }
             break;
@@ -437,7 +544,7 @@ void game_draw(struct Game *g) {
                 // self collision
                 for (int i = 0; i < g->snake_length; i++) {
                     if (g->snake[i].x == new_x && g->snake[i].y == new_y) {
-                        g->dead = true;
+                        go_to_loss_screen(g);
                         break;
                     }
                 }
@@ -641,6 +748,93 @@ void game_draw(struct Game *g) {
                                 .h = th};
         SDL_RenderTexture(g->renderer, g->timer_text_texture, NULL,
                           &timer_rect);
+    } else if (g->scene == -1) {
+
+        // loss screen
+
+        float mosx;
+        float mosy;
+        get_mouse_pos(g, &mosx, &mosy);
+
+        // big you died text
+        float tw = g->death_surface->w / 3.0f;
+        float th = g->death_surface->h / 3.0f;
+        SDL_FRect died_rect = {.x = WINDOW_WIDTH / 2 - (tw / 2),
+                               .y = 130,
+                               .w = tw,
+                               .h = th};
+        SDL_RenderTexture(g->renderer, g->death_texture, NULL, &died_rect);
+
+        // final time, texture got baked on death
+        tw = g->timer_text_surface->w / 5.0f;
+        th = g->timer_text_surface->h / 5.0f;
+        SDL_FRect time_rect = {.x = WINDOW_WIDTH / 2 - (tw / 2),
+                               .y = 330,
+                               .w = tw,
+                               .h = th};
+        SDL_RenderTexture(g->renderer, g->timer_text_texture, NULL,
+                          &time_rect);
+
+        // buttons, hitboxes live in game_events so keep em matching
+        float ypos_buttons = 480;
+        SDL_FRect home_rect = {.x = WINDOW_WIDTH / 2 - 220,
+                               .y = ypos_buttons,
+                               .w = 200,
+                               .h = 70};
+        SDL_FRect retry_rect = {.x = WINDOW_WIDTH / 2 + 20,
+                                .y = ypos_buttons,
+                                .w = 200,
+                                .h = 70};
+
+        bool home_hover = mosx >= home_rect.x &&
+                          mosx <= home_rect.x + home_rect.w &&
+                          mosy >= home_rect.y &&
+                          mosy <= home_rect.y + home_rect.h;
+        bool retry_hover = mosx >= retry_rect.x &&
+                           mosx <= retry_rect.x + retry_rect.w &&
+                           mosy >= retry_rect.y &&
+                           mosy <= retry_rect.y + retry_rect.h;
+
+        if (home_hover) {
+            SDL_SetRenderDrawColor(g->renderer, 90, 90, 90, 255);
+        } else {
+            SDL_SetRenderDrawColor(g->renderer, 45, 45, 45, 255);
+        }
+        SDL_RenderFillRect(g->renderer, &home_rect);
+
+        if (retry_hover) {
+            SDL_SetRenderDrawColor(g->renderer, 90, 90, 90, 255);
+        } else {
+            SDL_SetRenderDrawColor(g->renderer, 45, 45, 45, 255);
+        }
+        SDL_RenderFillRect(g->renderer, &retry_rect);
+
+        // button outlines
+        SDL_SetRenderDrawColor(g->renderer, 255, 255, 255, 255);
+        SDL_RenderRect(g->renderer, &home_rect);
+        SDL_RenderRect(g->renderer, &retry_rect);
+
+        // button labels, centered in their boxes
+        tw = g->home_surface->w / 8.0f;
+        th = g->home_surface->h / 8.0f;
+        SDL_FRect home_text_rect = {.x = home_rect.x +
+                                         (home_rect.w / 2) - (tw / 2),
+                                    .y = home_rect.y +
+                                         (home_rect.h / 2) - (th / 2),
+                                    .w = tw,
+                                    .h = th};
+        SDL_RenderTexture(g->renderer, g->home_texture, NULL, &home_text_rect);
+
+        tw = g->retry_surface->w / 8.0f;
+        th = g->retry_surface->h / 8.0f;
+        SDL_FRect retry_text_rect = {.x = retry_rect.x +
+                                          (retry_rect.w / 2) - (tw / 2),
+                                     .y = retry_rect.y +
+                                          (retry_rect.h / 2) - (th / 2),
+                                     .w = tw,
+                                     .h = th};
+        SDL_RenderTexture(g->renderer, g->retry_texture, NULL,
+                          &retry_text_rect);
     }
 
     SDL_RenderPresent(g->renderer);
