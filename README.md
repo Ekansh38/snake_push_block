@@ -44,4 +44,10 @@ make
 
 ## Controls
 
-Coming soon.
+WASD - to control the snake
+Arrow keys - on homepage to switch level
+Esc - while playing to pause
+
+Other:
+
+when you collide with a block, press that direction again to push the block.
