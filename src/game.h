@@ -90,10 +90,16 @@ struct Game {
 
     bool stopped;
 
-    // loss screen, death_scene remembers the level for retry
+    // level picker on home screen
+    int selected_level;
+
+    // loss screen is scene -1, pause menu is scene -2
+    // death_scene remembers the level for retry/resume
     int death_scene;
     SDL_Surface *death_surface;
     SDL_Texture *death_texture;
+    SDL_Surface *pause_surface;
+    SDL_Texture *pause_texture;
     SDL_Surface *home_surface;
     SDL_Texture *home_texture;
     SDL_Surface *retry_surface;

@@ -81,6 +81,15 @@ bool game_init_sdl(struct Game *g) {
         }
     }
 
+    g->pause_surface = TTF_RenderText_Blended(g->font, "Paused", 6, text_color);
+    if (g->pause_surface) {
+        g->pause_texture =
+            SDL_CreateTextureFromSurface(g->renderer, g->pause_surface);
+        if (g->pause_texture) {
+            SDL_SetTextureScaleMode(g->pause_texture, SDL_SCALEMODE_LINEAR);
+        }
+    }
+
     g->level_number_surface = TTF_RenderText_Blended(
         g->font, "Level: 1", 8,
         text_color);
@@ -151,6 +160,7 @@ bool game_new(struct Game **game) {
     }
 
     g->running = true;
+    g->selected_level = 1;
 
     return true;
 }
@@ -182,6 +192,9 @@ void game_free(struct Game **game) {
 
         SDL_DestroyTexture(g->retry_texture);
         SDL_DestroySurface(g->retry_surface);
+
+        SDL_DestroyTexture(g->pause_texture);
+        SDL_DestroySurface(g->pause_surface);
 
         if (g->font)
             TTF_CloseFont(g->font);

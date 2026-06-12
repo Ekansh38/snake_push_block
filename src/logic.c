@@ -14,23 +14,23 @@ void update_timer(struct Game *g, float number);
 void load_level(struct Game *g, int level) {
 
     g->timer_value = 0;
-    g->snake_length = 3;
     g->dead = false;
     g->stopped = false;
 
     if (level == 1) {
-        g->movement_interval = 0.23;
-        // setup snake itself
+        g->movement_interval = 0.3;
+        // setup snake itself (10x10 grid)
         g->snake[2] = (struct SnekSegment){.x = 3, .y = 4};
         g->snake[1] = (struct SnekSegment){.x = 4, .y = 4};
         g->snake[0] = (struct SnekSegment){.x = 5, .y = 4};
+        g->snake_length = 3;
         g->direction = RIGHT;
 
-        // eyes
+        // Smiley face goal pattern
+        // Eyes
         g->goal_blocks[0] = (struct Block){.x = 2, .y = 2, .type = YELLOW};
         g->goal_blocks[1] = (struct Block){.x = 7, .y = 2, .type = YELLOW};
-
-        // smile
+        // Smile
         g->goal_blocks[2] = (struct Block){.x = 2, .y = 6, .type = YELLOW};
         g->goal_blocks[3] = (struct Block){.x = 3, .y = 7, .type = YELLOW};
         g->goal_blocks[4] = (struct Block){.x = 4, .y = 7, .type = YELLOW};
@@ -38,99 +38,172 @@ void load_level(struct Game *g, int level) {
         g->goal_blocks[6] = (struct Block){.x = 6, .y = 7, .type = YELLOW};
         g->goal_blocks[7] = (struct Block){.x = 7, .y = 6, .type = YELLOW};
 
-        // random ahh
-        g->current_blocks[0] = (struct Block){.x = 3, .y = 0, .type = YELLOW};
-        g->current_blocks[1] = (struct Block){.x = 3, .y = 4, .type = YELLOW};
-        g->current_blocks[2] = (struct Block){.x = 6, .y = 3, .type = YELLOW};
-        g->current_blocks[3] = (struct Block){.x = 7, .y = 9, .type = YELLOW};
-        g->current_blocks[4] = (struct Block){.x = 1, .y = 5, .type = YELLOW};
-        g->current_blocks[5] = (struct Block){.x = 8, .y = 5, .type = YELLOW};
-        g->current_blocks[6] = (struct Block){.x = 4, .y = 9, .type = YELLOW};
-        g->current_blocks[7] = (struct Block){.x = 2, .y = 8, .type = YELLOW};
+        // Scattered face pieces (avoiding edges)
+        g->current_blocks[0] = (struct Block){.x = 3, .y = 2, .type = YELLOW};
+        g->current_blocks[1] = (struct Block){.x = 6, .y = 2, .type = YELLOW};
+        g->current_blocks[2] = (struct Block){.x = 2, .y = 4, .type = YELLOW};
+        g->current_blocks[3] = (struct Block){.x = 7, .y = 4, .type = YELLOW};
+        g->current_blocks[4] = (struct Block){.x = 3, .y = 6, .type = YELLOW};
+        g->current_blocks[5] = (struct Block){.x = 6, .y = 6, .type = YELLOW};
+        g->current_blocks[6] = (struct Block){.x = 4, .y = 5, .type = YELLOW};
+        g->current_blocks[7] = (struct Block){.x = 5, .y = 5, .type = YELLOW};
 
         g->cell_size = 64;
         g->num_of_blocks = 8;
     } else if (level == 2) {
-        g->movement_interval = 0.18;
-        // setup snake itself (centered in 40x22 grid)
-        g->snake[2] = (struct SnekSegment){.x = 18, .y = 11};
-        g->snake[1] = (struct SnekSegment){.x = 19, .y = 11};
-        g->snake[0] = (struct SnekSegment){.x = 20, .y = 11};
+        g->movement_interval = 0.25;
+        // setup snake itself (20x20 grid)
+        g->snake[3] = (struct SnekSegment){.x = 8, .y = 10};
+        g->snake[2] = (struct SnekSegment){.x = 9, .y = 10};
+        g->snake[1] = (struct SnekSegment){.x = 10, .y = 10};
+        g->snake[0] = (struct SnekSegment){.x = 11, .y = 10};
         g->direction = RIGHT;
+        g->snake_length = 4;
 
-        // Level 2: Cross pattern with RED and GREEN blocks
-        // Center
-        g->goal_blocks[0] = (struct Block){.x = 20, .y = 11, .type = RED};
-        // Vertical arm
-        g->goal_blocks[1] = (struct Block){.x = 20, .y = 8, .type = GREEN};
-        g->goal_blocks[2] = (struct Block){.x = 20, .y = 9, .type = RED};
-        g->goal_blocks[3] = (struct Block){.x = 20, .y = 13, .type = RED};
-        g->goal_blocks[4] = (struct Block){.x = 20, .y = 14, .type = GREEN};
-        // Horizontal arm
-        g->goal_blocks[5] = (struct Block){.x = 17, .y = 11, .type = GREEN};
-        g->goal_blocks[6] = (struct Block){.x = 18, .y = 11, .type = RED};
-        g->goal_blocks[7] = (struct Block){.x = 22, .y = 11, .type = RED};
-        g->goal_blocks[8] = (struct Block){.x = 23, .y = 11, .type = GREEN};
-        // Extra corner blocks
-        g->goal_blocks[9] = (struct Block){.x = 18, .y = 9, .type = GREEN};
+        // Tree pattern: trunk (RED) and leaves (GREEN)
+        // Trunk
+        g->goal_blocks[0] = (struct Block){.x = 10, .y = 12, .type = RED};
+        g->goal_blocks[1] = (struct Block){.x = 10, .y = 13, .type = RED};
+        g->goal_blocks[2] = (struct Block){.x = 10, .y = 14, .type = RED};
+        // Leaves (triangle shape)
+        g->goal_blocks[3] = (struct Block){.x = 10, .y = 8, .type = GREEN};
+        g->goal_blocks[4] = (struct Block){.x = 9, .y = 9, .type = GREEN};
+        g->goal_blocks[5] = (struct Block){.x = 10, .y = 9, .type = GREEN};
+        g->goal_blocks[6] = (struct Block){.x = 11, .y = 9, .type = GREEN};
+        g->goal_blocks[7] = (struct Block){.x = 8, .y = 10, .type = GREEN};
+        g->goal_blocks[8] = (struct Block){.x = 9, .y = 10, .type = GREEN};
+        g->goal_blocks[9] = (struct Block){.x = 11, .y = 10, .type = GREEN};
+        g->goal_blocks[10] = (struct Block){.x = 12, .y = 10, .type = GREEN};
 
-        // Scattered starting positions (corners and edges)
-        g->current_blocks[0] = (struct Block){.x = 2, .y = 2, .type = RED};
-        g->current_blocks[1] = (struct Block){.x = 37, .y = 2, .type = GREEN};
-        g->current_blocks[2] = (struct Block){.x = 2, .y = 19, .type = RED};
-        g->current_blocks[3] = (struct Block){.x = 37, .y = 19, .type = RED};
-        g->current_blocks[4] = (struct Block){.x = 20, .y = 1, .type = GREEN};
-        g->current_blocks[5] = (struct Block){.x = 10, .y = 20, .type = GREEN};
-        g->current_blocks[6] = (struct Block){.x = 30, .y = 20, .type = RED};
-        g->current_blocks[7] = (struct Block){.x = 1, .y = 11, .type = RED};
-        g->current_blocks[8] = (struct Block){.x = 38, .y = 11, .type = GREEN};
-        g->current_blocks[9] = (struct Block){.x = 15, .y = 5, .type = GREEN};
+        // Scattered starting positions (avoiding edges, 3-16 range)
+        g->current_blocks[0] = (struct Block){.x = 4, .y = 4, .type = RED};
+        g->current_blocks[1] = (struct Block){.x = 15, .y = 5, .type = GREEN};
+        g->current_blocks[2] = (struct Block){.x = 5, .y = 14, .type = RED};
+        g->current_blocks[3] = (struct Block){.x = 14, .y = 15, .type = RED};
+        g->current_blocks[4] = (struct Block){.x = 10, .y = 3, .type = GREEN};
+        g->current_blocks[5] = (struct Block){.x = 6, .y = 16, .type = GREEN};
+        g->current_blocks[6] = (struct Block){.x = 13, .y = 14, .type = GREEN};
+        g->current_blocks[7] = (struct Block){.x = 4, .y = 10, .type = GREEN};
+        g->current_blocks[8] = (struct Block){.x = 15, .y = 10, .type = GREEN};
+        g->current_blocks[9] = (struct Block){.x = 8, .y = 6, .type = GREEN};
+        g->current_blocks[10] = (struct Block){.x = 12, .y = 7, .type = RED};
 
         g->cell_size = 32;
-        g->num_of_blocks = 10;
+        g->num_of_blocks = 11;
     } else if (level == 3) {
-        g->movement_interval = 0.15;
-        // setup snake itself (40x22 grid)
-        g->snake[2] = (struct SnekSegment){.x = 10, .y = 20};
-        g->snake[1] = (struct SnekSegment){.x = 10, .y = 21};
-        g->snake[0] = (struct SnekSegment){.x = 11, .y = 21};
-        g->direction = UP;
+        g->movement_interval = 0.2;
+        // setup snake itself (20x22 grid)
+        g->snake[4] = (struct SnekSegment){.x = 8, .y = 18};
+        g->snake[3] = (struct SnekSegment){.x = 9, .y = 18};
+        g->snake[2] = (struct SnekSegment){.x = 10, .y = 18};
+        g->snake[1] = (struct SnekSegment){.x = 11, .y = 18};
+        g->snake[0] = (struct SnekSegment){.x = 12, .y = 18};
+        g->direction = RIGHT;
+        g->snake_length = 5;
 
-        // Level 3: Complex spiral pattern with BLUE and PINK
-        // blocks Outer ring
-        g->goal_blocks[0] = (struct Block){.x = 15, .y = 7, .type = BLUE};
-        g->goal_blocks[1] = (struct Block){.x = 20, .y = 7, .type = PINK};
-        g->goal_blocks[2] = (struct Block){.x = 25, .y = 7, .type = BLUE};
-        g->goal_blocks[3] = (struct Block){.x = 25, .y = 11, .type = PINK};
-        g->goal_blocks[4] = (struct Block){.x = 25, .y = 15, .type = BLUE};
-        g->goal_blocks[5] = (struct Block){.x = 20, .y = 15, .type = PINK};
-        g->goal_blocks[6] = (struct Block){.x = 15, .y = 15, .type = BLUE};
-        g->goal_blocks[7] = (struct Block){.x = 15, .y = 11, .type = PINK};
-        // Inner diagonal
-        g->goal_blocks[8] = (struct Block){.x = 18, .y = 9, .type = BLUE};
-        g->goal_blocks[9] = (struct Block){.x = 22, .y = 9, .type = PINK};
-        g->goal_blocks[10] = (struct Block){.x = 22, .y = 13, .type = BLUE};
-        g->goal_blocks[11] = (struct Block){.x = 18, .y = 13, .type = PINK};
+        // Nested squares pattern with BLUE and PINK
+        // Outer ring
+        g->goal_blocks[0] = (struct Block){.x = 5, .y = 5, .type = BLUE};
+        g->goal_blocks[1] = (struct Block){.x = 10, .y = 5, .type = PINK};
+        g->goal_blocks[2] = (struct Block){.x = 15, .y = 5, .type = BLUE};
+        g->goal_blocks[3] = (struct Block){.x = 15, .y = 10, .type = PINK};
+        g->goal_blocks[4] = (struct Block){.x = 15, .y = 15, .type = BLUE};
+        g->goal_blocks[5] = (struct Block){.x = 10, .y = 15, .type = PINK};
+        g->goal_blocks[6] = (struct Block){.x = 5, .y = 15, .type = BLUE};
+        g->goal_blocks[7] = (struct Block){.x = 5, .y = 10, .type = PINK};
+        // Inner square
+        g->goal_blocks[8] = (struct Block){.x = 8, .y = 8, .type = BLUE};
+        g->goal_blocks[9] = (struct Block){.x = 12, .y = 8, .type = PINK};
+        g->goal_blocks[10] = (struct Block){.x = 12, .y = 12, .type = BLUE};
+        g->goal_blocks[11] = (struct Block){.x = 8, .y = 12, .type = PINK};
 
-        // Extremely scattered challenging positions
-        g->current_blocks[0] = (struct Block){.x = 0, .y = 0, .type = BLUE};
-        g->current_blocks[1] = (struct Block){.x = 39, .y = 0, .type = PINK};
-        g->current_blocks[2] = (struct Block){.x = 0, .y = 21, .type = BLUE};
-        g->current_blocks[3] = (struct Block){.x = 39, .y = 21, .type = PINK};
-        g->current_blocks[4] = (struct Block){.x = 5, .y = 5, .type = BLUE};
-        g->current_blocks[5] = (struct Block){.x = 34, .y = 5, .type = PINK};
-        g->current_blocks[6] = (struct Block){.x = 5, .y = 16, .type = BLUE};
-        g->current_blocks[7] = (struct Block){.x = 34, .y = 16, .type = PINK};
-        g->current_blocks[8] = (struct Block){.x = 20, .y = 0, .type = BLUE};
-        g->current_blocks[9] = (struct Block){.x = 10, .y = 21, .type = PINK};
-        g->current_blocks[10] = (struct Block){.x = 30, .y = 21, .type = BLUE};
-        g->current_blocks[11] = (struct Block){.x = 0, .y = 11, .type = PINK};
+        // Scattered starting positions (avoiding edges, 3-16 x, 3-18 y)
+        g->current_blocks[0] = (struct Block){.x = 4, .y = 4, .type = BLUE};
+        g->current_blocks[1] = (struct Block){.x = 16, .y = 4, .type = PINK};
+        g->current_blocks[2] = (struct Block){.x = 4, .y = 16, .type = BLUE};
+        g->current_blocks[3] = (struct Block){.x = 16, .y = 16, .type = PINK};
+        g->current_blocks[4] = (struct Block){.x = 6, .y = 6, .type = BLUE};
+        g->current_blocks[5] = (struct Block){.x = 14, .y = 6, .type = PINK};
+        g->current_blocks[6] = (struct Block){.x = 6, .y = 14, .type = BLUE};
+        g->current_blocks[7] = (struct Block){.x = 14, .y = 14, .type = PINK};
+        g->current_blocks[8] = (struct Block){.x = 10, .y = 3, .type = BLUE};
+        g->current_blocks[9] = (struct Block){.x = 3, .y = 10, .type = PINK};
+        g->current_blocks[10] = (struct Block){.x = 16, .y = 10, .type = BLUE};
+        g->current_blocks[11] = (struct Block){.x = 10, .y = 17, .type = PINK};
 
         g->cell_size = 32;
         g->num_of_blocks = 12;
+    } else if (level == 4) {
+        g->movement_interval = 0.15;
+        // setup snake itself (20x22 grid)
+        g->snake[5] = (struct SnekSegment){.x = 8, .y = 18};
+        g->snake[4] = (struct SnekSegment){.x = 9, .y = 18};
+        g->snake[3] = (struct SnekSegment){.x = 10, .y = 18};
+        g->snake[2] = (struct SnekSegment){.x = 11, .y = 18};
+        g->snake[1] = (struct SnekSegment){.x = 12, .y = 18};
+        g->snake[0] = (struct SnekSegment){.x = 13, .y = 18};
+        g->direction = UP;
+        g->snake_length = 6;
+
+        // Final level: House with sun - all 5 colors
+        // Sun (YELLOW)
+        g->goal_blocks[0] = (struct Block){.x = 15, .y = 3, .type = YELLOW};
+        g->goal_blocks[1] = (struct Block){.x = 16, .y = 3, .type = YELLOW};
+        g->goal_blocks[2] = (struct Block){.x = 15, .y = 4, .type = YELLOW};
+        g->goal_blocks[3] = (struct Block){.x = 16, .y = 4, .type = YELLOW};
+        // Roof (RED)
+        g->goal_blocks[4] = (struct Block){.x = 7, .y = 8, .type = RED};
+        g->goal_blocks[5] = (struct Block){.x = 8, .y = 7, .type = RED};
+        g->goal_blocks[6] = (struct Block){.x = 9, .y = 6, .type = RED};
+        g->goal_blocks[7] = (struct Block){.x = 10, .y = 6, .type = RED};
+        g->goal_blocks[8] = (struct Block){.x = 11, .y = 7, .type = RED};
+        g->goal_blocks[9] = (struct Block){.x = 12, .y = 8, .type = RED};
+        // House walls (BLUE)
+        g->goal_blocks[10] = (struct Block){.x = 8, .y = 9, .type = BLUE};
+        g->goal_blocks[11] = (struct Block){.x = 8, .y = 10, .type = BLUE};
+        g->goal_blocks[12] = (struct Block){.x = 8, .y = 11, .type = BLUE};
+        g->goal_blocks[13] = (struct Block){.x = 11, .y = 9, .type = BLUE};
+        g->goal_blocks[14] = (struct Block){.x = 11, .y = 10, .type = BLUE};
+        g->goal_blocks[15] = (struct Block){.x = 11, .y = 11, .type = BLUE};
+        // Door (PINK)
+        g->goal_blocks[16] = (struct Block){.x = 9, .y = 10, .type = PINK};
+        g->goal_blocks[17] = (struct Block){.x = 9, .y = 11, .type = PINK};
+        // Grass (GREEN)
+        g->goal_blocks[18] = (struct Block){.x = 6, .y = 12, .type = GREEN};
+        g->goal_blocks[19] = (struct Block){.x = 8, .y = 12, .type = GREEN};
+        g->goal_blocks[20] = (struct Block){.x = 10, .y = 12, .type = GREEN};
+        g->goal_blocks[21] = (struct Block){.x = 12, .y = 12, .type = GREEN};
+        g->goal_blocks[22] = (struct Block){.x = 14, .y = 12, .type = GREEN};
+
+        // Scattered starting positions (all 5 colors, avoiding edges)
+        g->current_blocks[0] = (struct Block){.x = 4, .y = 3, .type = YELLOW};
+        g->current_blocks[1] = (struct Block){.x = 14, .y = 8, .type = YELLOW};
+        g->current_blocks[2] = (struct Block){.x = 5, .y = 16, .type = YELLOW};
+        g->current_blocks[3] = (struct Block){.x = 15, .y = 15, .type = YELLOW};
+        g->current_blocks[4] = (struct Block){.x = 3, .y = 6, .type = RED};
+        g->current_blocks[5] = (struct Block){.x = 16, .y = 6, .type = RED};
+        g->current_blocks[6] = (struct Block){.x = 4, .y = 10, .type = RED};
+        g->current_blocks[7] = (struct Block){.x = 15, .y = 10, .type = RED};
+        g->current_blocks[8] = (struct Block){.x = 6, .y = 4, .type = RED};
+        g->current_blocks[9] = (struct Block){.x = 13, .y = 14, .type = RED};
+        g->current_blocks[10] = (struct Block){.x = 3, .y = 11, .type = BLUE};
+        g->current_blocks[11] = (struct Block){.x = 16, .y = 11, .type = BLUE};
+        g->current_blocks[12] = (struct Block){.x = 6, .y = 8, .type = BLUE};
+        g->current_blocks[13] = (struct Block){.x = 13, .y = 8, .type = BLUE};
+        g->current_blocks[14] = (struct Block){.x = 5, .y = 14, .type = BLUE};
+        g->current_blocks[15] = (struct Block){.x = 14, .y = 5, .type = BLUE};
+        g->current_blocks[16] = (struct Block){.x = 7, .y = 5, .type = PINK};
+        g->current_blocks[17] = (struct Block){.x = 12, .y = 15, .type = PINK};
+        g->current_blocks[18] = (struct Block){.x = 8, .y = 14, .type = GREEN};
+        g->current_blocks[19] = (struct Block){.x = 11, .y = 4, .type = GREEN};
+        g->current_blocks[20] = (struct Block){.x = 4, .y = 17, .type = GREEN};
+        g->current_blocks[21] = (struct Block){.x = 15, .y = 17, .type = GREEN};
+        g->current_blocks[22] = (struct Block){.x = 10, .y = 8, .type = GREEN};
+
+        g->cell_size = 32;
+        g->num_of_blocks = 23;
     }
 }
-
 void go_to_loss_screen(struct Game *g) {
     g->dead = true;
     g->death_scene = g->scene;
@@ -351,6 +424,45 @@ void game_events(struct Game *g) {
         case SDL_EVENT_KEY_DOWN: {
             if (g->event.key.repeat)
                 break;
+
+            // esc pauses, esc again resumes
+            if (g->event.key.scancode == SDL_SCANCODE_ESCAPE) {
+                if (g->scene >= 1) {
+                    g->death_scene = g->scene;
+                    g->scene = -2;
+                    // bake the current time into the timer texture
+                    update_timer(g, g->timer_value);
+                } else if (g->scene == -2) {
+                    g->scene = g->death_scene;
+                }
+                break;
+            }
+
+            // level picker on home screen
+            if (g->scene == 0) {
+                switch (g->event.key.scancode) {
+                case SDL_SCANCODE_A:
+                case SDL_SCANCODE_LEFT:
+                    g->selected_level -= 1;
+                    if (g->selected_level < 1)
+                        g->selected_level = 3;
+                    break;
+                case SDL_SCANCODE_D:
+                case SDL_SCANCODE_RIGHT:
+                    g->selected_level += 1;
+                    if (g->selected_level > 3)
+                        g->selected_level = 1;
+                    break;
+                default:
+                    break;
+                }
+                break;
+            }
+
+            // only steer while actually playing
+            if (g->scene < 1)
+                break;
+
             enum Direction new_direction = g->direction;
             bool is_direction_key = true;
             switch (g->event.key.scancode) {
@@ -401,16 +513,16 @@ void game_events(struct Game *g) {
 
                     if (mosx >= xpos_play && mosx <= xpos_play + 180 &&
                         mosy >= ypos_play && mosy <= ypos_play + 60) {
-                        g->scene = 1; // go to level 1
-                        load_level(g, 1);
+                        g->scene = g->selected_level;
+                        load_level(g, g->selected_level);
                     }
-                } else if (g->scene == -1) {
-                    // loss screen buttons, keep in sync with game_draw
+                } else if (g->scene < 0) {
+                    // loss and pause buttons, keep in sync with game_draw
                     float ypos_buttons = 480;
 
                     if (mosx >= WINDOW_WIDTH / 2 - 220 &&
-                        mosx <= WINDOW_WIDTH / 2 - 20 &&
-                        mosy >= ypos_buttons && mosy <= ypos_buttons + 70) {
+                        mosx <= WINDOW_WIDTH / 2 - 20 && mosy >= ypos_buttons &&
+                        mosy <= ypos_buttons + 70) {
                         g->scene = 0; // home
                     } else if (mosx >= WINDOW_WIDTH / 2 + 20 &&
                                mosx <= WINDOW_WIDTH / 2 + 220 &&
@@ -461,6 +573,19 @@ void game_draw(struct Game *g) {
         }
 
         SDL_RenderTexture(g->renderer, play_button, NULL, &play_dst_rect);
+
+        // selected level under the play button, arrows to change it
+        if (g->last_cached_level_number != g->selected_level) {
+            update_level_text(g, g->selected_level);
+        }
+        float tw = g->level_number_surface->w / 8.0f;
+        float th = g->level_number_surface->h / 8.0f;
+        SDL_FRect picked_rect = {.x = xpos_play + 90 - (tw / 2),
+                                 .y = ypos_play + 75,
+                                 .w = tw,
+                                 .h = th};
+        SDL_RenderTexture(g->renderer, g->level_number_texture, NULL,
+                          &picked_rect);
     } else if (g->scene >= 1) {
 
         // check win condition
@@ -711,15 +836,9 @@ void game_draw(struct Game *g) {
                                .h = th};
         SDL_RenderTexture(g->renderer, g->goal_texture, NULL, &text_rect);
 
-        // implement the level text correctly
-        if (g->scene == 1) {
-            if (g->last_cached_level_number != 1) {
-                update_level_text(g, 1);
-            }
-        } else if (g->scene == 2) {
-            if (g->last_cached_level_number != 2) {
-                update_level_text(g, 2);
-            }
+        // level text follows whatever scene we are in
+        if (g->last_cached_level_number != g->scene) {
+            update_level_text(g, g->scene);
         }
 
         tw = g->level_number_surface->w / 8.0f;
@@ -748,52 +867,45 @@ void game_draw(struct Game *g) {
                                 .h = th};
         SDL_RenderTexture(g->renderer, g->timer_text_texture, NULL,
                           &timer_rect);
-    } else if (g->scene == -1) {
+    } else if (g->scene < 0) {
 
-        // loss screen
+        // loss screen and pause menu share this layout
 
         float mosx;
         float mosy;
         get_mouse_pos(g, &mosx, &mosy);
 
-        // big you died text
-        float tw = g->death_surface->w / 3.0f;
-        float th = g->death_surface->h / 3.0f;
-        SDL_FRect died_rect = {.x = WINDOW_WIDTH / 2 - (tw / 2),
-                               .y = 130,
-                               .w = tw,
-                               .h = th};
-        SDL_RenderTexture(g->renderer, g->death_texture, NULL, &died_rect);
+        // big title, you died or paused
+        SDL_Surface *title_surface =
+            g->scene == -1 ? g->death_surface : g->pause_surface;
+        SDL_Texture *title_texture =
+            g->scene == -1 ? g->death_texture : g->pause_texture;
+        float tw = title_surface->w / 3.0f;
+        float th = title_surface->h / 3.0f;
+        SDL_FRect died_rect = {
+            .x = WINDOW_WIDTH / 2 - (tw / 2), .y = 130, .w = tw, .h = th};
+        SDL_RenderTexture(g->renderer, title_texture, NULL, &died_rect);
 
-        // final time, texture got baked on death
+        // time, texture got baked on death or pause
         tw = g->timer_text_surface->w / 5.0f;
         th = g->timer_text_surface->h / 5.0f;
-        SDL_FRect time_rect = {.x = WINDOW_WIDTH / 2 - (tw / 2),
-                               .y = 330,
-                               .w = tw,
-                               .h = th};
-        SDL_RenderTexture(g->renderer, g->timer_text_texture, NULL,
-                          &time_rect);
+        SDL_FRect time_rect = {
+            .x = WINDOW_WIDTH / 2 - (tw / 2), .y = 330, .w = tw, .h = th};
+        SDL_RenderTexture(g->renderer, g->timer_text_texture, NULL, &time_rect);
 
         // buttons, hitboxes live in game_events so keep em matching
         float ypos_buttons = 480;
-        SDL_FRect home_rect = {.x = WINDOW_WIDTH / 2 - 220,
-                               .y = ypos_buttons,
-                               .w = 200,
-                               .h = 70};
-        SDL_FRect retry_rect = {.x = WINDOW_WIDTH / 2 + 20,
-                                .y = ypos_buttons,
-                                .w = 200,
-                                .h = 70};
+        SDL_FRect home_rect = {
+            .x = WINDOW_WIDTH / 2 - 220, .y = ypos_buttons, .w = 200, .h = 70};
+        SDL_FRect retry_rect = {
+            .x = WINDOW_WIDTH / 2 + 20, .y = ypos_buttons, .w = 200, .h = 70};
 
-        bool home_hover = mosx >= home_rect.x &&
-                          mosx <= home_rect.x + home_rect.w &&
-                          mosy >= home_rect.y &&
-                          mosy <= home_rect.y + home_rect.h;
-        bool retry_hover = mosx >= retry_rect.x &&
-                           mosx <= retry_rect.x + retry_rect.w &&
-                           mosy >= retry_rect.y &&
-                           mosy <= retry_rect.y + retry_rect.h;
+        bool home_hover =
+            mosx >= home_rect.x && mosx <= home_rect.x + home_rect.w &&
+            mosy >= home_rect.y && mosy <= home_rect.y + home_rect.h;
+        bool retry_hover =
+            mosx >= retry_rect.x && mosx <= retry_rect.x + retry_rect.w &&
+            mosy >= retry_rect.y && mosy <= retry_rect.y + retry_rect.h;
 
         if (home_hover) {
             SDL_SetRenderDrawColor(g->renderer, 90, 90, 90, 255);
@@ -817,22 +929,20 @@ void game_draw(struct Game *g) {
         // button labels, centered in their boxes
         tw = g->home_surface->w / 8.0f;
         th = g->home_surface->h / 8.0f;
-        SDL_FRect home_text_rect = {.x = home_rect.x +
-                                         (home_rect.w / 2) - (tw / 2),
-                                    .y = home_rect.y +
-                                         (home_rect.h / 2) - (th / 2),
-                                    .w = tw,
-                                    .h = th};
+        SDL_FRect home_text_rect = {
+            .x = home_rect.x + (home_rect.w / 2) - (tw / 2),
+            .y = home_rect.y + (home_rect.h / 2) - (th / 2),
+            .w = tw,
+            .h = th};
         SDL_RenderTexture(g->renderer, g->home_texture, NULL, &home_text_rect);
 
         tw = g->retry_surface->w / 8.0f;
         th = g->retry_surface->h / 8.0f;
-        SDL_FRect retry_text_rect = {.x = retry_rect.x +
-                                          (retry_rect.w / 2) - (tw / 2),
-                                     .y = retry_rect.y +
-                                          (retry_rect.h / 2) - (th / 2),
-                                     .w = tw,
-                                     .h = th};
+        SDL_FRect retry_text_rect = {
+            .x = retry_rect.x + (retry_rect.w / 2) - (tw / 2),
+            .y = retry_rect.y + (retry_rect.h / 2) - (th / 2),
+            .w = tw,
+            .h = th};
         SDL_RenderTexture(g->renderer, g->retry_texture, NULL,
                           &retry_text_rect);
     }
