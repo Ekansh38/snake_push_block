@@ -590,12 +590,12 @@ void game_events(struct Game *g) {
                 case SDL_SCANCODE_LEFT:
                     g->selected_level -= 1;
                     if (g->selected_level < 1)
-                        g->selected_level = 3;
+                        g->selected_level = 6;
                     break;
                 case SDL_SCANCODE_D:
                 case SDL_SCANCODE_RIGHT:
                     g->selected_level += 1;
-                    if (g->selected_level > 3)
+                    if (g->selected_level > 6)
                         g->selected_level = 1;
                     break;
                 default:
