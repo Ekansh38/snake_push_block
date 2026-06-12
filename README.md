@@ -45,7 +45,9 @@ make
 ## Controls
 
 WASD - to control the snake.
+
 Arrow keys - on homepage to switch level.
+
 Esc - while playing to pause.
 
 Other:
