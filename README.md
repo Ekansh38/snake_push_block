@@ -2,6 +2,8 @@
 
 A snake game with block-pushing mechanics, built with C and SDL3.
 
+hand crafted sloppy code by yours truly...
+
 ## images
 
 <img width="1512" height="914" alt="imag4" src="https://github.com/user-attachments/assets/9f7def38-4062-45dd-b852-dfa658a9ecd2" />
