@@ -10,6 +10,157 @@
 
 void get_mouse_pos(struct Game *g, float *x, float *y);
 
+void push(struct Game *g, int number_of_columns, int number_of_rows) {
+
+    if (g->stopped && !g->dead) {
+
+        int new_x = g->snake[0].x;
+        int new_y = g->snake[0].y;
+
+        switch (g->direction) {
+        case UP:
+            new_y -= 1;
+            break;
+        case DOWN:
+            new_y += 1;
+            break;
+        case LEFT:
+            new_x -= 1;
+            break;
+        case RIGHT:
+            new_x += 1;
+            break;
+        }
+
+        // wrap
+        new_x = (new_x + number_of_columns) % number_of_columns;
+        new_y = (new_y + number_of_rows) % number_of_rows;
+
+        // self collision
+        for (int i = 0; i < g->snake_length; i++) {
+            if (g->snake[i].x == new_x && g->snake[i].y == new_y) {
+                g->dead = true;
+                break;
+            }
+        }
+
+        if (!g->dead) {
+
+            // find the block directly in front of the head
+
+            int front_block = -1;
+            for (int i = 0; i < g->num_of_blocks; i++) {
+                if (g->current_blocks[i].x == new_x &&
+                    g->current_blocks[i].y == new_y) {
+                    front_block = i;
+                    break;
+                }
+            }
+
+            if (front_block == -1) {
+                // nothing in front
+                g->stopped = false;
+                return;
+            }
+
+            int dx = 0, dy = 0;
+            switch (g->direction) {
+            case UP:
+                dy = -1;
+                break;
+            case DOWN:
+                dy = 1;
+                break;
+            case LEFT:
+                dx = -1;
+                break;
+            case RIGHT:
+                dx = 1;
+                break;
+            }
+
+            // chain
+            int chain_indices[100];
+            int chain_len = 1;
+            chain_indices[0] = front_block;
+            int check_x = new_x;
+            int check_y = new_y;
+
+            while (chain_len < 100) {
+                check_x =
+                    (check_x + dx + number_of_columns) % number_of_columns;
+                check_y = (check_y + dy + number_of_rows) % number_of_rows;
+                bool found = false;
+                for (int j = 0; j < g->num_of_blocks; j++) {
+                    if (g->current_blocks[j].x == check_x &&
+                        g->current_blocks[j].y == check_y) {
+                        chain_indices[chain_len] = j;
+                        chain_len += 1;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                    break;
+            }
+
+            bool can_push = true;
+            for (int j = 0; j < g->snake_length; j++) {
+                if (g->snake[j].x == check_x && g->snake[j].y == check_y) {
+                    can_push = false;
+                    break;
+                }
+            }
+
+            if (can_push) {
+                // Push all blocks in chain (from back to front)
+                for (int j = chain_len - 1; j >= 0; j--) {
+                    int idx = chain_indices[j];
+                    g->current_blocks[idx].x =
+                        (g->current_blocks[idx].x + dx + number_of_columns) %
+                        number_of_columns;
+                    g->current_blocks[idx].y =
+                        (g->current_blocks[idx].y + dy + number_of_rows) %
+                        number_of_rows;
+                }
+
+                // move snake, no need to set stopped to false cuz ur still in
+                // front of it.
+                for (int j = g->snake_length - 1; j > 0; j--) {
+                    g->snake[j] = g->snake[j - 1];
+                }
+                g->snake[0].x = new_x;
+                g->snake[0].y = new_y;
+
+                int correct = 0;
+                for (int i = 0; i < g->num_of_blocks; i++) {
+                    for (int j = 0; j < g->num_of_blocks; j++) {
+                        if (g->goal_blocks[i].x == g->current_blocks[j].x &&
+                            g->goal_blocks[i].y == g->current_blocks[j].y) {
+                            correct++;
+                        }
+                    }
+                }
+
+                if (correct == g->num_of_blocks) {
+                    printf("YAY");
+                }
+            }
+        }
+    }
+}
+
+void set_color(struct Game *g, enum BlockType type) {
+    switch (type) {
+    case YELLOW:
+        SDL_SetRenderDrawColor(g->renderer, 255, 255, 0, 255);
+        break;
+    default:
+        SDL_SetRenderDrawColor(g->renderer, 255, 255, 255, 255);
+        break;
+    }
+}
+
 void update_level_text(struct Game *g, int number) {
 
     char the_string[32];
@@ -57,6 +208,8 @@ void game_events(struct Game *g) {
             g->running = false;
             break;
         case SDL_EVENT_KEY_DOWN: {
+            if (g->event.key.repeat)
+                break;
             enum Direction new_direction = g->direction;
             switch (g->event.key.scancode) {
             case SDL_SCANCODE_W:
@@ -89,6 +242,9 @@ void game_events(struct Game *g) {
                     g->direction = new_direction;
                 }
             }
+            if (g->stopped) {
+                push(g, 640 / g->cell_size, 640 / g->cell_size);
+            }
         } break;
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
             // jonathan blow
@@ -107,18 +263,55 @@ void game_events(struct Game *g) {
                     // setup level 1 stuff
 
                     g->timer_value = 0; // ik its already zero but who cares?
-                    g->movement_interval = 0.15;
+                    g->movement_interval = 0.23;
                     // setup snake itself
-                    g->snake[6] = (struct SnekSegment){.x = 6, .y = 9};
-                    g->snake[5] = (struct SnekSegment){.x = 7, .y = 9};
-                    g->snake[4] = (struct SnekSegment){.x = 8, .y = 9};
-                    g->snake[3] = (struct SnekSegment){.x = 9, .y = 9};
-                    g->snake[2] = (struct SnekSegment){.x = 10, .y = 9};
-                    g->snake[1] = (struct SnekSegment){.x = 11, .y = 9};
-                    g->snake[0] = (struct SnekSegment){.x = 12, .y = 9};
-                    g->snake_length = 7;
+                    g->snake[2] = (struct SnekSegment){.x = 3, .y = 4};
+                    g->snake[1] = (struct SnekSegment){.x = 4, .y = 4};
+                    g->snake[0] = (struct SnekSegment){.x = 5, .y = 4};
+                    g->snake_length = 3;
                     g->direction = RIGHT;
                     g->dead = false;
+
+                    // eyes
+                    g->goal_blocks[0] =
+                        (struct Block){.x = 2, .y = 2, .type = YELLOW};
+                    g->goal_blocks[1] =
+                        (struct Block){.x = 7, .y = 2, .type = YELLOW};
+
+                    // smile
+                    g->goal_blocks[2] =
+                        (struct Block){.x = 2, .y = 6, .type = YELLOW};
+                    g->goal_blocks[3] =
+                        (struct Block){.x = 3, .y = 7, .type = YELLOW};
+                    g->goal_blocks[4] =
+                        (struct Block){.x = 4, .y = 7, .type = YELLOW};
+                    g->goal_blocks[5] =
+                        (struct Block){.x = 5, .y = 7, .type = YELLOW};
+                    g->goal_blocks[6] =
+                        (struct Block){.x = 6, .y = 7, .type = YELLOW};
+                    g->goal_blocks[7] =
+                        (struct Block){.x = 7, .y = 6, .type = YELLOW};
+
+                    // random ahh
+                    g->current_blocks[0] =
+                        (struct Block){.x = 3, .y = 0, .type = YELLOW};
+                    g->current_blocks[1] =
+                        (struct Block){.x = 3, .y = 4, .type = YELLOW};
+                    g->current_blocks[2] =
+                        (struct Block){.x = 6, .y = 3, .type = YELLOW};
+                    g->current_blocks[3] =
+                        (struct Block){.x = 7, .y = 9, .type = YELLOW};
+                    g->current_blocks[4] =
+                        (struct Block){.x = 1, .y = 5, .type = YELLOW};
+                    g->current_blocks[5] =
+                        (struct Block){.x = 8, .y = 5, .type = YELLOW};
+                    g->current_blocks[6] =
+                        (struct Block){.x = 4, .y = 9, .type = YELLOW};
+                    g->current_blocks[7] =
+                        (struct Block){.x = 2, .y = 8, .type = YELLOW};
+
+                    g->cell_size = 64;
+                    g->num_of_blocks = 8;
                 }
             }
             break;
@@ -130,6 +323,13 @@ void game_events(struct Game *g) {
 }
 
 void game_draw(struct Game *g) {
+    int grid_y_start = 80;
+    int grid_width = 640;
+    int grid_height = 640;
+    int top_area = 80;
+    int number_of_columns = grid_width / g->cell_size; // 10
+    int number_of_rows = grid_height / g->cell_size;   // 10
+
     SDL_SetRenderDrawColor(g->renderer, 0, 0, 0, 255); // black background
     SDL_RenderClear(g->renderer);
 
@@ -156,12 +356,12 @@ void game_draw(struct Game *g) {
         SDL_RenderTexture(g->renderer, play_button, NULL, &play_dst_rect);
     } else if (g->scene >= 1) {
 
+        // check win condition
+
         // draw top line
         SDL_SetRenderDrawColor(g->renderer, 255, 255, 255, 255);
         SDL_FRect top_line_rect = {.x = 0, .y = 76, .w = WINDOW_WIDTH, .h = 4};
         SDL_RenderFillRect(g->renderer, &top_line_rect);
-
-        int top_area = 80;
 
         // TODO!! Update title screen
 
@@ -174,14 +374,40 @@ void game_draw(struct Game *g) {
                                         .h = WINDOW_HEIGHT};
         SDL_RenderFillRect(g->renderer, &dividing_line_rect);
 
-        int cell_size = 32;
-        int grid_y_start = 80;
-        int grid_width = 640;
-        int grid_height = 640;
-        int number_of_columns = grid_width / cell_size; // 20
-        int number_of_rows = grid_height / cell_size;   // 20
-                                                        //
-        if (!g->dead) {
+        //
+        // draw blocks now
+
+        // goal blocks
+
+        for (int i = 0; i < g->num_of_blocks; i++) {
+            int x = g->goal_blocks[i].x;
+            int y = g->goal_blocks[i].y;
+
+            set_color(g, g->goal_blocks[i].type);
+
+            SDL_FRect block_rect = {.x = x * g->cell_size,
+                                    .y = y * g->cell_size + grid_y_start,
+                                    .w = g->cell_size,
+                                    .h = g->cell_size};
+
+            SDL_RenderFillRect(g->renderer, &block_rect);
+        }
+
+        for (int i = 0; i < g->num_of_blocks; i++) {
+            int x = g->current_blocks[i].x;
+            int y = g->current_blocks[i].y;
+
+            set_color(g, g->current_blocks[i].type);
+
+            SDL_FRect block_rect = {.x = x * g->cell_size + grid_width + 2,
+                                    .y = y * g->cell_size + grid_y_start,
+                                    .w = g->cell_size,
+                                    .h = g->cell_size};
+
+            SDL_RenderFillRect(g->renderer, &block_rect);
+        }
+
+        if (!g->dead && !g->stopped) {
             g->movement_timer += g->delta_time;
             if (g->movement_timer >= g->movement_interval) {
                 g->movement_timer = 0;
@@ -205,8 +431,8 @@ void game_draw(struct Game *g) {
                 }
 
                 // wrap
-                new_x = (new_x + 20) % 20;
-                new_y = (new_y + 20) % 20;
+                new_x = (new_x + number_of_columns) % number_of_columns;
+                new_y = (new_y + number_of_rows) % number_of_rows;
 
                 // self collision
                 for (int i = 0; i < g->snake_length; i++) {
@@ -217,41 +443,59 @@ void game_draw(struct Game *g) {
                 }
 
                 if (!g->dead) {
-                    // move body
-                    for (int i = g->snake_length - 1; i > 0; i--) {
-                        g->snake[i] = g->snake[i - 1];
+
+                    // check for block collision for movement logic
+
+                    for (int i = 0; i < g->num_of_blocks; i++) {
+                        int x = g->current_blocks[i].x;
+                        int y = g->current_blocks[i].y;
+
+                        if (new_x == x && new_y == y) {
+                            g->stopped = true;
+                            g->movement_timer =
+                                g->movement_interval; // insta move on move
+                        }
                     }
-                    // move head
-                    g->snake[0].x = new_x;
-                    g->snake[0].y = new_y;
+
+                    if (!g->stopped) {
+
+                        // move body
+                        for (int i = g->snake_length - 1; i > 0; i--) {
+                            g->snake[i] = g->snake[i - 1];
+                        }
+                        // move head
+                        g->snake[0].x = new_x;
+                        g->snake[0].y = new_y;
+                    }
                 }
             }
         }
-
 
         // draw the snake, head is red, body green
 
         SDL_SetRenderDrawColor(g->renderer, 255, 0, 0, 255); // red head
                                                              //
-        SDL_FRect head_rect = {.x = (g->snake[0].x * cell_size) + grid_width,
-                               .y = (g->snake[0].y * cell_size) + top_area,
-                               .w = cell_size + 2,
-                               .h = cell_size + 2};
+        SDL_FRect head_rect = {.x = (g->snake[0].x * g->cell_size) + grid_width,
+                               .y = (g->snake[0].y * g->cell_size) + top_area,
+                               .w = g->cell_size + 2,
+                               .h = g->cell_size + 2};
         SDL_RenderFillRect(g->renderer, &head_rect);
 
         if (!g->dead) {
-            SDL_SetRenderDrawColor(g->renderer, 0, 255, 0, 255); // green body
+            SDL_SetRenderDrawColor(g->renderer, 0, 255, 0,
+                                   255); // green body
         } else {
-            SDL_SetRenderDrawColor(g->renderer, 0, 130, 0, 255); // green body
+            SDL_SetRenderDrawColor(g->renderer, 0, 130, 0,
+                                   255); // green body
         }
 
         for (int i = 1; i < g->snake_length; i++) {
 
-            SDL_FRect body_rect = {.x =
-                                       (g->snake[i].x * cell_size) + grid_width,
-                                   .y = (g->snake[i].y * cell_size) + top_area,
-                                   .w = cell_size + 2,
-                                   .h = cell_size + 2};
+            SDL_FRect body_rect = {
+                .x = (g->snake[i].x * g->cell_size) + grid_width,
+                .y = (g->snake[i].y * g->cell_size) + top_area,
+                .w = g->cell_size + 2,
+                .h = g->cell_size + 2};
             SDL_RenderFillRect(g->renderer, &body_rect);
         }
 
@@ -261,7 +505,7 @@ void game_draw(struct Game *g) {
         int width_of_grid_line = 2;
         for (int i = 0; i < number_of_columns;
              i++) { // not <= cuz we already draw the middle line
-            SDL_FRect line = {.x = i * cell_size,
+            SDL_FRect line = {.x = i * g->cell_size,
                               .y = grid_y_start,
                               .w = width_of_grid_line,
                               .h = grid_height};
@@ -274,7 +518,7 @@ void game_draw(struct Game *g) {
                 pad = -width_of_grid_line;
             }
             SDL_FRect line = {.x = 0,
-                              .y = i * cell_size + grid_y_start + pad,
+                              .y = i * g->cell_size + grid_y_start + pad,
                               .w = grid_width - 2,
                               .h = width_of_grid_line};
             SDL_RenderFillRect(g->renderer, &line);
@@ -288,7 +532,7 @@ void game_draw(struct Game *g) {
             if (i == number_of_columns) {
                 pad = -2;
             }
-            SDL_FRect line = {.x = i * cell_size + grid_width + pad,
+            SDL_FRect line = {.x = i * g->cell_size + grid_width + pad,
                               .y = grid_y_start,
                               .w = width_of_grid_line,
                               .h = grid_height};
@@ -301,11 +545,51 @@ void game_draw(struct Game *g) {
                 pad = -width_of_grid_line;
             }
             SDL_FRect line = {.x = grid_width + 2,
-                              .y = i * cell_size + grid_y_start + pad,
+                              .y = i * g->cell_size + grid_y_start + pad,
                               .w = grid_width,
                               .h = width_of_grid_line};
             SDL_RenderFillRect(g->renderer, &line);
         }
+
+        // draw goal block outlines on right grid
+        for (int i = 0; i < g->num_of_blocks; i++) {
+            int x = g->goal_blocks[i].x;
+            int y = g->goal_blocks[i].y;
+
+            set_color(g, g->goal_blocks[i].type);
+
+            // top line
+            SDL_FRect top = {.x = x * g->cell_size + grid_width + 2,
+                             .y = y * g->cell_size + grid_y_start,
+                             .w = g->cell_size,
+                             .h = width_of_grid_line};
+            SDL_RenderFillRect(g->renderer, &top);
+
+            // bottom line
+            SDL_FRect bottom = {.x = x * g->cell_size + grid_width + 2,
+                                .y = (y + 1) * g->cell_size + grid_y_start -
+                                     width_of_grid_line + 2,
+                                .w = g->cell_size,
+                                .h = width_of_grid_line};
+            SDL_RenderFillRect(g->renderer, &bottom);
+
+            // left line
+            SDL_FRect left = {.x = x * g->cell_size + grid_width + 1,
+                              .y = y * g->cell_size + grid_y_start,
+                              .w = width_of_grid_line,
+                              .h = g->cell_size + 2};
+            SDL_RenderFillRect(g->renderer, &left);
+
+            // right line
+            SDL_FRect right = {.x = (x + 1) * g->cell_size + grid_width + 2 -
+                                    width_of_grid_line,
+                               .y = y * g->cell_size + grid_y_start,
+                               .w = width_of_grid_line,
+                               .h = g->cell_size};
+            SDL_RenderFillRect(g->renderer, &right);
+        }
+
+        SDL_SetRenderDrawColor(g->renderer, 70, 70, 70, 255);
 
         // font drawing
         TTF_SetFontStyle(g->font, TTF_STYLE_NORMAL);
@@ -357,7 +641,6 @@ void game_draw(struct Game *g) {
                                 .h = th};
         SDL_RenderTexture(g->renderer, g->timer_text_texture, NULL,
                           &timer_rect);
-
     }
 
     SDL_RenderPresent(g->renderer);

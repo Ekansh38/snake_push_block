@@ -21,9 +21,23 @@ enum Direction {
     RIGHT,
 };
 
+enum BlockType {
+    GREEN,
+    RED,
+    BLUE,
+    PINK,
+    YELLOW,
+};
+
 struct SnekSegment {
     int x;
     int y;
+};
+
+struct Block {
+    int x;
+    int y;
+    enum BlockType type;
 };
 
 struct Game {
@@ -51,13 +65,15 @@ struct Game {
     SDL_Texture *level_number_texture;
 
     // timer text
-    
+
     float timer_value;
     float last_cached_timer_number;
     SDL_Surface *timer_text_surface;
     SDL_Texture *timer_text_texture;
 
     // actual snake
+    
+    int cell_size;
 
     struct SnekSegment snake[64];
     float movement_timer;
@@ -65,6 +81,14 @@ struct Game {
     int snake_length;
     enum Direction direction;
     bool dead;
+
+    // blocks/sokoban logic
+
+    struct Block current_blocks[512];
+    struct Block goal_blocks[512];
+    int num_of_blocks;
+
+    bool stopped;
 };
 
 bool game_init_sdl(struct Game *g);
