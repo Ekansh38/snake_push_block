@@ -8,7 +8,7 @@ A noice hand crafted sloppy code by yours truly...
 
 <img width="1512" height="914" alt="imag4" src="https://github.com/user-attachments/assets/9f7def38-4062-45dd-b852-dfa658a9ecd2" />
 <img width="1512" height="946" alt="image1" src="https://github.com/user-attachments/assets/2f11d1e2-8c21-405b-a761-305cc9d83246" />
-<img width="1512" height="924" alt="imag3" src="https://github.com/user-attachments/assets/4df3bcdc-e664-44a0-97ad-8439a139e46b" />
+<img width="1919" height="1052" alt="Screenshot 2026-06-16 at 5 56 39 PM" src="https://github.com/user-attachments/assets/ba25bab1-0b5b-4c12-905b-08ab12613506" />
 
 
 ## Build from Source
