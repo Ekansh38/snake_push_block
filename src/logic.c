@@ -88,6 +88,7 @@ void load_level(struct Game *g, int level) {
         g->current_blocks[9] = (struct Block){.x = 8, .y = 6, .type = GREEN};
         g->current_blocks[10] = (struct Block){.x = 12, .y = 7, .type = RED};
 
+        // very nice stuff here
         g->cell_size = 32;
         g->num_of_blocks = 11;
     } else if (level == 3) {
@@ -362,6 +363,7 @@ void push(struct Game *g, int number_of_columns, int number_of_rows) {
 
         int new_x = g->snake[0].x;
         int new_y = g->snake[0].y;
+
 
         switch (g->direction) {
         case UP:

@@ -61,3 +61,11 @@ Esc - while playing to pause.
 Other:
 
 when you collide with a block, press that direction again to push the block.
+
+## AI USE
+
+- I used AI to help make a release for MacOs with Claude code.
+- It was also late before the deadline so I used Claude code to help with some level design. (I am sure
+  you can tell 😭)
+
+- everything else was done by me! (first time using SDL3, was fun!)

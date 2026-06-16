@@ -1,4 +1,0 @@
-  // calloc allocates memory AND zeros all bytes (unlike malloc which leaves garbage values)
-  // This ensures all struct fields start initialized: pointers = NULL, running = false,
-  // delta_time = 0.0, scene = 0. Safe defaults prevent crashes from uninitialized access.
-  *game = calloc(1, sizeof(struct Game));
