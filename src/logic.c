@@ -66,14 +66,14 @@ void load_level(struct Game *g, int level) {
         g->goal_blocks[1] = (struct Block){.x = 10, .y = 13, .type = RED};
         g->goal_blocks[2] = (struct Block){.x = 10, .y = 14, .type = RED};
         // Leaves (triangle shape)
-        g->goal_blocks[3] = (struct Block){.x = 10, .y = 8, .type = GREEN};
-        g->goal_blocks[4] = (struct Block){.x = 9, .y = 9, .type = GREEN};
-        g->goal_blocks[5] = (struct Block){.x = 10, .y = 9, .type = GREEN};
-        g->goal_blocks[6] = (struct Block){.x = 11, .y = 9, .type = GREEN};
-        g->goal_blocks[7] = (struct Block){.x = 8, .y = 10, .type = GREEN};
-        g->goal_blocks[8] = (struct Block){.x = 9, .y = 10, .type = GREEN};
-        g->goal_blocks[9] = (struct Block){.x = 11, .y = 10, .type = GREEN};
-        g->goal_blocks[10] = (struct Block){.x = 12, .y = 10, .type = GREEN};
+        g->goal_blocks[3] = (struct Block){.x = 10, .y = 10, .type = GREEN};
+        g->goal_blocks[4] = (struct Block){.x = 9, .y = 11, .type = GREEN};
+        g->goal_blocks[5] = (struct Block){.x = 10, .y = 11, .type = GREEN};
+        g->goal_blocks[6] = (struct Block){.x = 11, .y = 11, .type = GREEN};
+        g->goal_blocks[7] = (struct Block){.x = 8, .y = 12, .type = GREEN};
+        g->goal_blocks[8] = (struct Block){.x = 9, .y = 12, .type = GREEN};
+        g->goal_blocks[9] = (struct Block){.x = 11, .y = 12, .type = GREEN};
+        g->goal_blocks[10] = (struct Block){.x = 12, .y = 12, .type = GREEN};
 
         // Scattered starting positions (avoiding edges, 3-16 range)
         g->current_blocks[0] = (struct Block){.x = 4, .y = 4, .type = RED};
