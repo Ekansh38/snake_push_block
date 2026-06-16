@@ -2,7 +2,7 @@
 
 A snake game with block-pushing mechanics, built with C and SDL3.
 
-hand crafted sloppy code by yours truly...
+A noice hand crafted sloppy code by yours truly...
 
 ## images
 
