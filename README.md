@@ -1,6 +1,6 @@
 # snake_push_block
 
-A snake game with block-pushing mechanics, built with C and SDL3.
+A snake game with block-pushing mechanics, built with C and SDL3. Also, I made all the art myself!
 
 A noice hand crafted sloppy code by yours truly...
 
